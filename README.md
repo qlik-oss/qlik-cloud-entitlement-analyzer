@@ -26,11 +26,11 @@ It provides information such as:
 
 These applications can be installed via an interactive Qlik Application Automation [installer](https://community.qlik.com/t5/Official-Support-Articles/Qlik-Cloud-Monitoring-Apps-Workflow-Guide/ta-p/2134140) or [manually](/../../releases) using the PDF guide.
 
-## Tenant License Support
+## Tenant Subscription Support
 
-Certain monitoring apps only support specific license types. Refer to the license support matrix for this app below.
+Certain monitoring apps only support specific subscription types. Refer to the subscription support matrix for this app below.
 
-**License Type**|**Supported**
+**Subscription Type**|**Supported**
 :-----:|:-----:
 User-based|Yes
 Capacity-based|No
