@@ -22,18 +22,13 @@ It provides information such as:
 * Where your Analyzer Capacity entitlements are being consumed, and forecasted
   usage
 
-## Installing/ updating
+## Installing / Updating
 
 These applications can be installed via an interactive Qlik Application Automation [installer](https://community.qlik.com/t5/Official-Support-Articles/Qlik-Cloud-Monitoring-Apps-Workflow-Guide/ta-p/2134140) or [manually](/../../releases) using the PDF guide.
 
-## Tenant Subscription Support
+## Subscription Compatibility
 
-Certain monitoring apps only support specific subscription types. Refer to the subscription support matrix for this app below.
-
-**Subscription Type**|**Supported**
-:-----:|:-----:
-User-based|Yes
-Capacity-based|No
+Some monitoring apps are designed for specific Qlik Cloud subscription types. Refer to the compatibility matrix within the [Qlik Cloud Monitoring Apps](https://github.com/qlik-oss/qlik-cloud-monitoring-apps?tab=readme-ov-file#applications) repository.
 
 ## Support policy
 
