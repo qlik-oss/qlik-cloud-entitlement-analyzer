@@ -1,0 +1,910 @@
+[
+  {
+    "qInfo": {
+      "qId": "8425c416-e5f2-446d-9a6e-951a3c939068",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "SpaceNameUnique"
+      ],
+      "qFieldLabels": [
+        "SpaceNameUnique"
+      ],
+      "title": "SpaceNameUnique",
+      "coloring": {
+        "colorMapRef": "YJWPag",
+        "changeHash": "0.42452510458860604",
+        "hasValueColors": false
+      }
+    },
+    "qMetaDef": {
+      "title": "SpaceNameUnique",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "YJWPag",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "AppNameUnique"
+      ],
+      "qFieldLabels": [
+        "AppNameUnique"
+      ],
+      "title": "AppNameUnique",
+      "coloring": {
+        "changeHash": "0.9296368640638273",
+        "hasValueColors": false
+      }
+    },
+    "qMetaDef": {
+      "title": "AppNameUnique",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "mzsJwq",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "=Aggr(Only({\u003cEntitlement_Assigned-={'unassigned'}\u003e}Entitlement_Assigned),Entitlement_Assigned)"
+      ],
+      "qFieldLabels": [
+        "Assigned Entitlement"
+      ],
+      "title": "Assigned Entitlement",
+      "coloring": {
+        "changeHash": "0.5546943110987337",
+        "colorMapRef": "mzsJwq",
+        "hasValueColors": false
+      }
+    },
+    "qMetaDef": {
+      "title": "Assigned Entitlement",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "pMqv",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "Hostname"
+      ],
+      "qFieldLabels": [
+        "Tenant Hostname"
+      ],
+      "title": "Tenant Hostname",
+      "coloring": {
+        "changeHash": "0.8627630002822291"
+      }
+    },
+    "qMetaDef": {
+      "title": "Tenant Hostname",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "bbwmf",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "TenantID"
+      ],
+      "qFieldLabels": [
+        "Tenant ID"
+      ],
+      "title": "Tenant ID",
+      "coloring": {
+        "changeHash": "0.7817338609123954",
+        "colorMapRef": "bbwmf"
+      }
+    },
+    "qMetaDef": {
+      "title": "Tenant ID",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "29fa3f48-47fd-4dfd-a2b4-c8391a4aaffc",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "TenantName"
+      ],
+      "qFieldLabels": [
+        "Tenant Name"
+      ],
+      "title": "Tenant Name",
+      "coloring": {
+        "colorMapRef": "bbwmf",
+        "changeHash": "0.5931701241630927"
+      }
+    },
+    "qMetaDef": {
+      "title": "Tenant Name",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "JVeSJJ",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "ConsumptionConcurrencyMinute"
+      ],
+      "qFieldLabels": [
+        "Consumption Concurrency Minute"
+      ],
+      "title": "Consumption Concurrency Minute",
+      "coloring": {
+        "changeHash": "0.7639441332179833",
+        "colorMapRef": "JVeSJJ"
+      }
+    },
+    "qMetaDef": {
+      "title": "Consumption Concurrency Minute",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "f7c0f253-19d3-4837-8fed-91d359be755c",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "consumerName"
+      ],
+      "qFieldLabels": [
+        "Consumer"
+      ],
+      "title": "Consumer",
+      "coloring": {
+        "colorMapRef": "mJYvtV",
+        "changeHash": "0.7283218528291215"
+      }
+    },
+    "qMetaDef": {
+      "title": "Consumer",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "mJYvtV",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "assigneeName"
+      ],
+      "qFieldLabels": [
+        "Assinged user"
+      ],
+      "title": "Assinged user",
+      "coloring": {
+        "changeHash": "0.6964716419807959"
+      }
+    },
+    "qMetaDef": {
+      "title": "Assinged user",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "yPRZEc",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "SpaceType"
+      ],
+      "qFieldLabels": [
+        "Space Type"
+      ],
+      "title": "Space Type",
+      "coloring": {
+        "changeHash": "0.7643225120428692",
+        "colorMapRef": "yPRZEc"
+      }
+    },
+    "qMetaDef": {
+      "title": "Space Type",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "aGDcd",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "=if(allotmentMonth='$(=Month(Today())\u0026chr(32)\u0026Year( Today()))',\r\nlicense_name,null())\n "
+      ],
+      "qFieldLabels": [
+        "Current entitlement"
+      ],
+      "title": "Current entitlement",
+      "coloring": {
+        "changeHash": "0.6004603811970415",
+        "colorMapRef": "aGDcd"
+      }
+    },
+    "qMetaDef": {
+      "title": "Current entitlement",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "qcV",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "H",
+      "qFieldDefs": [
+        "SpaceName",
+        "AppName"
+      ],
+      "qFieldLabels": [],
+      "title": "Space -\u003e App",
+      "coloring": {
+        "changeHash": "0.19586166088333612"
+      }
+    },
+    "qMetaDef": {
+      "title": "Space -\u003e App",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "ehmD",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "=if(Entitlement_Consumed='analyzer_time',consumerName,null())"
+      ],
+      "qFieldLabels": [
+        "Capacity user"
+      ],
+      "title": "Capacity user",
+      "coloring": {
+        "changeHash": "0.3464040488753872"
+      }
+    },
+    "qMetaDef": {
+      "title": "Capacity user",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "YEtmvGh",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "UsageDay"
+      ],
+      "qFieldLabels": [
+        "Usage Day"
+      ],
+      "title": "Usage Day",
+      "coloring": {
+        "changeHash": "0.7868735337683743"
+      }
+    },
+    "qMetaDef": {
+      "title": "Usage Day",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "JXJEj",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "=if(allotmentMonth='$(=Month(Today())\u0026chr(32)\u0026Year( Today()))',\r\noverage,null())\n "
+      ],
+      "qFieldLabels": [
+        "Current overage"
+      ],
+      "title": "Current overage",
+      "coloring": {
+        "changeHash": "0.8151352059816614"
+      }
+    },
+    "qMetaDef": {
+      "title": "Current overage",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "CrvmjdK",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "=if(allotmentMonth='$(=Month(Today())\u0026chr(32)\u0026Year( Today()))',\r\nunitsUsed,null())\n "
+      ],
+      "qFieldLabels": [
+        "Current units used"
+      ],
+      "title": "Current units used",
+      "coloring": {
+        "changeHash": "0.5627327002403884"
+      }
+    },
+    "qMetaDef": {
+      "title": "Current units used",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "VDtKnm",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "=if(allotmentMonth='$(=Month(Today())\u0026chr(32)\u0026Year( Today()))',\r\nunits,null())\n "
+      ],
+      "qFieldLabels": [
+        "Current units"
+      ],
+      "title": "Current units",
+      "coloring": {
+        "changeHash": "0.8644554156807787"
+      }
+    },
+    "qMetaDef": {
+      "title": "Current units",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "psJXVf",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "Entitlement_Consumed"
+      ],
+      "qFieldLabels": [
+        "Consumed Entitlement"
+      ],
+      "title": "Consumed Entitlement",
+      "coloring": {
+        "changeHash": "0.4932891309176639"
+      }
+    },
+    "qMetaDef": {
+      "title": "Consumed Entitlement",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "yaxAkgV",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "AssignedDate"
+      ],
+      "qFieldLabels": [
+        "AssignedDate"
+      ],
+      "title": "AssignedDate",
+      "coloring": {
+        "changeHash": "0.9608272708897065"
+      }
+    },
+    "qMetaDef": {
+      "title": "AssignedDate",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "31696158-d413-4df9-b55c-145724ed097c",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "AssignedWeek"
+      ],
+      "qFieldLabels": [
+        "AssignedWeek"
+      ],
+      "title": "AssignedWeek",
+      "coloring": {
+        "colorMapRef": "HHuBm",
+        "changeHash": "0.666498747761717"
+      }
+    },
+    "qMetaDef": {
+      "title": "AssignedWeek",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "HHuBm",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "AssignedMonthText"
+      ],
+      "qFieldLabels": [
+        "AssignedMonthText"
+      ],
+      "title": "AssignedMonthText",
+      "coloring": {
+        "changeHash": "0.7384186269347452"
+      }
+    },
+    "qMetaDef": {
+      "title": "AssignedMonthText",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "8a0b3bbe-4c08-4f7a-8db4-fe0c49af37cd",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "UsageWeek"
+      ],
+      "qFieldLabels": [
+        "UsageWeek"
+      ],
+      "title": "UsageWeek",
+      "coloring": {
+        "colorMapRef": "xsQeF",
+        "changeHash": "0.32997440728362504"
+      }
+    },
+    "qMetaDef": {
+      "title": "UsageWeek",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "395b8854-fbcf-479a-95a2-c30f8b736acc",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "UsageDate"
+      ],
+      "qFieldLabels": [
+        "UsageDate"
+      ],
+      "title": "UsageDate",
+      "coloring": {
+        "colorMapRef": "xsQeF",
+        "changeHash": "0.5038117851223671"
+      }
+    },
+    "qMetaDef": {
+      "title": "UsageDate",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "xsQeF",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "UsageMonthText"
+      ],
+      "qFieldLabels": [
+        "UsageMonthText"
+      ],
+      "title": "UsageMonthText",
+      "coloring": {
+        "changeHash": "0.5284230389601545"
+      }
+    },
+    "qMetaDef": {
+      "title": "UsageMonthText",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "UJUE",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "AssignedMonthText"
+      ],
+      "qFieldLabels": [
+        "Month"
+      ],
+      "title": "Month",
+      "coloring": {
+        "changeHash": "0.49616588472802636",
+        "colorMapRef": "UJUE"
+      }
+    },
+    "qMetaDef": {
+      "title": "Month",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "jmVxc",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "H",
+      "qFieldDefs": [
+        "UsageMonthText",
+        "UsageWeek",
+        "UsageDate"
+      ],
+      "qFieldLabels": [],
+      "title": "Month (drill-down)",
+      "coloring": {
+        "changeHash": "0.4808760482356771",
+        "colorMapRef": "jmVxc"
+      }
+    },
+    "qMetaDef": {
+      "title": "Month (drill-down)",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "MqFpnq",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "consumerName"
+      ],
+      "qFieldLabels": [
+        "User"
+      ],
+      "title": "User",
+      "coloring": {
+        "changeHash": "0.7018326535284405"
+      }
+    },
+    "qMetaDef": {
+      "title": "User",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "BLeWPTP",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "license_name"
+      ],
+      "qFieldLabels": [
+        "Entitlement"
+      ],
+      "title": "Entitlement",
+      "coloring": {
+        "changeHash": "0.8446702482340331",
+        "colorMapRef": "BLeWPTP"
+      }
+    },
+    "qMetaDef": {
+      "title": "Entitlement",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "eTEKSSd",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "Week"
+      ],
+      "qFieldLabels": [
+        "Week"
+      ],
+      "title": "Week",
+      "coloring": {
+        "changeHash": "0.05029799501379184"
+      }
+    },
+    "qMetaDef": {
+      "title": "Week",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "JtQPqX",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "licenseUsage"
+      ],
+      "qFieldLabels": [
+        "License usage"
+      ],
+      "title": "License usage",
+      "coloring": {
+        "changeHash": "0.4003067215437457",
+        "colorMapRef": "JtQPqX"
+      }
+    },
+    "qMetaDef": {
+      "title": "License usage",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "ab22c000-b30e-4ec9-9705-4972d6588f94",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "=unitsUsed"
+      ],
+      "qFieldLabels": [
+        "Units Used"
+      ],
+      "title": "Units Used",
+      "coloring": {
+        "colorMapRef": "ab22c000-b30e-4ec9-9705-4972d6588f94",
+        "changeHash": "0.4141869148295747"
+      }
+    },
+    "qMetaDef": {
+      "title": "Units Used",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "cBrrKen",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "=UnitDimensionName_Analyzer"
+      ],
+      "qFieldLabels": [
+        "Analyzer"
+      ],
+      "title": "Analyzer",
+      "coloring": {
+        "changeHash": "0.795381071133699",
+        "colorMapRef": "cBrrKen"
+      }
+    },
+    "qMetaDef": {
+      "title": "Analyzer",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "92f0101d-9c20-4ee5-b613-19c6d6977f67",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "overage"
+      ],
+      "qFieldLabels": [
+        "Overage"
+      ],
+      "title": "Overage",
+      "coloring": {
+        "colorMapRef": "ZJRzD",
+        "changeHash": "0.6229097329238218"
+      }
+    },
+    "qMetaDef": {
+      "title": "Overage",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "ZJRzD",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "units"
+      ],
+      "qFieldLabels": [
+        "Units"
+      ],
+      "title": "Units",
+      "coloring": {
+        "changeHash": "0.8337548507490398"
+      }
+    },
+    "qMetaDef": {
+      "title": "Units",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "fUzzKsM",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "Day"
+      ],
+      "qFieldLabels": [
+        "Day"
+      ],
+      "title": "Day",
+      "coloring": {
+        "changeHash": "0.18035431508066546"
+      }
+    },
+    "qMetaDef": {
+      "title": "Day",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "LkJyAuP",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "AppName"
+      ],
+      "qFieldLabels": [
+        "App"
+      ],
+      "title": "App",
+      "coloring": {
+        "changeHash": "0.8427584481470076"
+      }
+    },
+    "qMetaDef": {
+      "title": "App",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "zaTTP",
+      "qType": "dimension"
+    },
+    "qDim": {
+      "qGrouping": "N",
+      "qFieldDefs": [
+        "SpaceName"
+      ],
+      "qFieldLabels": [
+        "Space"
+      ],
+      "title": "Space",
+      "coloring": {
+        "changeHash": "0.22407210024694324"
+      }
+    },
+    "qMetaDef": {
+      "title": "Space",
+      "description": "",
+      "tags": []
+    }
+  }
+]

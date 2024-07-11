@@ -1,0 +1,1892 @@
+///$tab About
+/*
+
+    __________      _____________________                           _____     _______              ______                          
+    ___  ____/________  /___(_)_  /___  /___________ _________________  /_    ___    |____________ ___  /____  ____________________
+    __  __/  __  __ \  __/_  /_  __/_  /_  _ \_  __ `__ \  _ \_  __ \  __/    __  /| |_  __ \  __ `/_  /__  / / /__  /_  _ \_  ___/
+    _  /___  _  / / / /_ _  / / /_ _  / /  __/  / / / / /  __/  / / / /_      _  ___ |  / / / /_/ /_  / _  /_/ /__  /_/  __/  /    
+    /_____/  /_/ /_/\__/ /_/  \__/ /_/  \___//_/ /_/ /_/\___//_/ /_/\__/      /_/  |_/_/ /_/\__,_/ /_/  _\__, / _____/\___//_/     
+                                                                                                        /____/                     
+
+    Copyright 2023 QlikTech International
+    Created by Konstantinos Mertzianis, Senior Quality Analyst, Qlik
+
+	About the "Entitlement Analyzer" app:
+    
+    The Entitlement Analyzer provides a comprehensive dashboard to analyze Entitlement metadata across a Qlik Sense tenant(s),
+    providing developers and administrators a holistic view of the analyzer capacity used. 
+
+    
+
+    Enjoy!              
+    
+    
+*/    
+///$tab ** Configuration **
+Trace Configuration;
+
+////////////////////////////////////////////////////////////////////////////////////////
+// *Required* Configuration 
+
+// IMPORTANT: To run this application, the user must be a "Tenant Admin" and must have an API Key, which requires the "Developer Role"
+// and APIs to be enabled within the tenant.
+
+/*
+1. The name of the REST connection that will be used. You must first create a valid REST connection to any endpoint to Qlik Sense tenant.
+		Example: '<Space>:<Connection Name>'
+        			Note: ':<Connection Name>' is the relative path which will check for a connection in the current space.
+		Example Connection: 
+					URL: 			https://<tenant-name>.<region>.qlikcloud.com/api/v1/items
+					Header: 		"Authorization"
+					Header Value: 	"Bearer <token>"
+		For reference on how to connect: 
+					https://qlik.dev/tutorials/generate-your-first-api-key
+*/
+Set vu_rest_connection = ':monitoring_apps_REST';
+   
+/*
+2. The full path to where you want to store your QVDs.
+		Example: 'lib://<Space>:<DataFiles>'
+        			Note: 'lib://:<Connection Name>' is the relative path which will check for a connection in the current space.
+*/
+Set vu_qvd_storage_connection = 'lib://:DataFiles';
+
+
+/*
+3. (Optional) If you are receiving 404 errors, it is possible that while the app was reloading, someone has deleted an app, so it's metadata can no longer be found.
+  You can roll over these errors by setting ErrorMode to 0, without any harm to the app. Set to 0 when it is absolutely necessary and after testing connectivity.
+*/
+Set ErrorMode=1;
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+///$tab * Optional Configuration *
+TRACE Optional Configuration;
+
+////////////////////////////////////////////////////////////////////////////////////////
+// Optional Configuration (No need to change these unless you desire) 
+
+SET vu_personal_space_user_field = 'Name';		// The user field to best represent the user: 'Id', 'Name', 'Subject', 'Email'
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+// Multi-Tenant App Configuration
+
+// This application has support for multi-tenancy. If this app is designated as a "parent" app, it loads in the generated
+// QVDs of all "child" apps from a centralized location (e.g., AWS S3, Azure Blob, or Google Cloud Storage where the 
+// "QlikMetaCollection" directory resides) and does not directly harvest any data itself, meaning it depends on the existence 
+// of "child" apps. If designated as a child app, it writes out all of its final QVDs post harvest to a centralized location.
+
+SET vu_multi_tenant_enabled 			= 0;					// To enable Multi-Tenant app support, regardless of "Parent" or "Child" (1 or 0)
+
+SET vu_is_parent_app 					= 0;					// If this application is to be the parent app across varying tenants (1 or 0)
+
+// The connection to the parent directory of the QlikMetaCollection directory, which houses all of the multi-tenant metadata.
+// This is the root location to read/write all QVDs to so that they can be loaded across tenants (S3, Azure Blob, or Google 
+// Cloud Storage). The final path will resemble "QlikMetaCollection/Tenants/<TenantID>/Monitoring/<Monitoring App Name>/<Table>.qvd". 
+// The location below should point to the parent directory of the "QlikMetaCollection" folder. If the "QlikMetaCollection" 
+// folder does not exist, it will be automatically created.
+
+// **Azure Blob, AWS S3, and Google CLoud Storage have been tested and confirmed to work without any modifications**
+SET vu_qlik_meta_collection_parent_dir = 'lib://:';		// Parent directory of the "QlikMetaCollection" folder (trailing slash optional)
+
+////////////////////////////////////////////////////////////////////////////////////////
+///$tab Variables
+Sub variables
+  
+//// General System  & Date Time Variables
+  SET ThousandSep=',';
+  SET DecimalSep='.';
+  SET TimeFormat= 'hh:mm:ss';
+  SET DateFormat= 'YYYY-MM-DD';
+  SET TimestampFormat= 'YYYY-MM-DD hh:mm:ss';
+  SET FirstWeekDay=6;
+  SET BrokenWeeks=1;
+  SET ReferenceDay=0;
+  SET FirstMonthOfYear=1;
+  SET CollationLocale='en-US';
+  SET MonthNames='Jan;Feb;Mar;Apr;May;Jun;Jul;Aug;Sep;Oct;Nov;Dec';
+  SET LongMonthNames='January;February;March;April;May;June;July;August;September;October;November;December';
+  SET DayNames='Mon;Tue;Wed;Thu;Fri;Sat;Sun';
+  SET LongDayNames='Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday';
+  SET NumericalAbbreviation='3:k;6:M;9:B;12:T;15:P;18:E;21:Z;24:Y;-3:m;-6:μ;-9:n;-12:p;-15:f;-18:a;-21:z;-24:y';
+  
+  SET vAppRAMPeakReloadSizeQuota 	= 16106127360; 	// 15 GB for reload peak RAM  
+  SET CreateSearchIndexOnReload=1;	// to assist search results in app
+  Search Exclude '*ID','_*','*Tim*';	// Exclude these fields from the global search.
+  SET HidePrefix='_';
+  
+  LET vu_tenant_fqdn = GetSysAttr('tenantUrl');
+																																	//
+  
+//// Calendar Variables
+  LET vLast24Hours 		=	Num(TimeStamp(Now(1)-1));
+  LET vLast72Hours 		=	Num(TimeStamp(Now(1)-3));
+  LET vLast7Days 		=	Num(TimeStamp(Now(1)-7));
+  LET vLast30Days	 	=	Num(TimeStamp(Now(1)-30));
+  Let vLast60Days 		=	Num(TimeStamp(Now(1)-60));
+  Let vLast90Days 		=	Num(TimeStamp(Now(1)-90)); 
+  
+//// Run-time variables
+  LET vStartTime 			= Now(1);
+  LET LastReloadTime 		= Timestamp(LastSuccessfulReloadStartTime);
+  LET app_qvd_name			= Lower(Replace('$(app_name)',' ','_'));
+  SET output_qvd_name		= '$(vu_qvd_storage_connection)/$(app_qvd_name)_$1_$2.qvd';
+  LET Month_Start = Replace(timestamp(MonthStart(floor(Now(1))),'YYYY-MM-DD hh:mm:ssZ'),' ','T');
+  LET Month_End = Replace(timestamp(MonthEnd(floor(Now(1))),'YYYY-MM-DD hh:mm:ssZ'),' ','T');
+ // SET rolling_qvd_name		= '$(vu_qvd_storage_connection)/app_analyzer_rolling.qvd';
+  
+  SET vIncremental 					= 1;  // Incremental load flag -- default = 1 (active). This can be disabled by setting to 0 (why do that?)
+  SET vu_personal_space_user_list  	= 'id','name','subject','email';
+  LET app_reload_metadata_qvd 		= '$(output_qvd_name(Consumption_Overview,$(app_version)))';
+  LET incremental_qvds_available	= If(Len(FileTime('$(app_reload_metadata_qvd)'))>0,1,0);  // Check to see that incremental QVDs are available
+  LET rolling_qvds_available	 	= If(Len(FileTime('$(rolling_qvd_name)'))>0,1,0);  // Check to see that rolling QVD is available
+  LET incremental_message 			= If($(incremental_qvds_available)=1,'Incremental QVDs found','No Incremental QVDs found. Do not panic. I can fix that.');
+  Trace $(incremental_message);
+  LET vLastReloadTime 				= TimeStamp(ReloadTime());
+  LET vReloadTimeDiffFromGMT 		= Now(1) - GMT();
+  LET vConsumptionMinutes 		 	= 1; // The width of the concurrency buckets for analyzing consumption concurrency. Default 1.
+  SET vRollingLineSelect = 'App RAM (MB)'; // SET default view for the Rolling data visualizations.
+
+//// Colors
+  SET c_light_gray			= 'RGB(240,240,240)';
+  SET c_threshold_red		= 'RGB(165,67,67)';
+  SET c_red					= 'RGB(172, 77, 88)';//'RGB(204,102,119)';
+  SET c_orange 				= 'RGB(233,141,54)'; 
+  SET c_yellow				= 'RGB(221,204,119)';
+  SET c_blue				= 'RGB(68,119,170)';
+  SET c_green				= 'RGB(17, 128, 40)';//'RGB(17,119,51)';
+  SET c_gray 				= 'RGB(148, 146, 152)';//'RGB(150,150,150)';
+  SET c_lightred 			= 'RGB(240,209,214)';
+  SET c_lightblue 			= 'RGB(188,181,201)'; 
+  SET c_Managed 			= 'RGB(220,66,63)';
+  SET c_Shared 				= 'RGB(0,92,185)';
+  SET c_Personal 			= 'RGB(204,204,204)';
+  //// ARGB colors -- requires input value to set the intensity (alpha) value of the color. Example using field [dual90]:  $(c_red_alpha(dual90)) 
+  SET c_red_alpha			= 'ARGB($1,204,102,119)';
+  SET c_orange_alpha		= 'ARGB($1,233,141,54)'; 
+  SET c_yellow_alpha		= 'ARGB($1,221,204,119)';
+  SET c_blue_alpha			= 'ARGB($1,68,119,170)';
+  SET c_green_alpha			= 'ARGB($1,17,119,51)';
+  SET c_gray_alpha			= 'ARGB($1,150,150,150)';
+  SET c_red_breeze_alpha	= 'ARGB($1,155,58,59)';
+  SET c_orange_breeze_alpha	= 'ARGB($1,233,141,54)';
+  SET c_teal_breeze_alpha	= 'ARGB($1,19,118,122)';
+  SET c_green_breeze_alpha	= 'ARGB($1,101,177,99)';
+  SET c_red_0_green_alpha	= 'IF($1=0,c_red,ARGB($1,101,177,99))';
+
+
+End Sub
+
+///$tab Check License
+SUB check_license
+
+    // check to see whether the tenant is on a capacity license
+
+    LIB CONNECT TO '$(vu_rest_connection)';
+
+    RestConnectorMasterTable:
+    SQL SELECT 
+        "__KEY_root",
+        (SELECT 
+            "name",
+            "__FK_allotments"
+        FROM "allotments" FK "__FK_allotments")
+    FROM JSON (wrap on) "root" PK "__KEY_root"
+    WITH CONNECTION (  
+        URL "https://$(vu_tenant_fqdn)/api/v1/licenses/overview"
+    );
+
+    [CheckLicense]:
+    LOAD	
+        [name]
+    RESIDENT RestConnectorMasterTable
+    WHERE [name]='fullUser';
+
+    DROP TABLE RestConnectorMasterTable;
+
+    IF NoOfRows('CheckLicense') > 0 THEN
+    	TRACE;
+    	TRACE *******************************;
+        TRACE WARNING!;
+        
+        TRACE This tenant is on a capacity-based license, which the Entitlement Analyzer does not support as it analyzes user-based licenses. Dropping all tables and halting...;
+		TRACE *******************************;
+
+        LET vNumTables = NoOfTables();
+
+        FOR i = NoOfTables() - 1 TO 0 STEP - 1
+            LET vTable = TableName($(i));
+            DROP TABLES [$(vTable)];
+        NEXT
+
+        exit script;
+    END IF
+
+    DROP TABLE CheckLicense;
+
+END SUB
+
+
+///$tab Check Version
+SUB check_version
+
+    // check to see whether the app is the latest version
+
+    LIB CONNECT TO '$(vu_rest_connection)';
+
+    RestConnectorMasterTable:
+    SQL SELECT 
+        "id",
+        "name",
+        "version",
+        "source",
+        "qcmaInstaller",
+        "oemInstaller"
+    FROM JSON (wrap on) "root"
+    WITH CONNECTION (  
+        URL "https://raw.githubusercontent.com/qlik-oss/qlik-cloud-monitoring-apps/main/manifests/resources.json",
+        HTTPHEADER "Authorization" ""
+    );
+
+    [Version]:
+    LOAD	
+        [version]
+    RESIDENT RestConnectorMasterTable
+    WHERE name='$(app_name)';
+
+    DROP TABLE RestConnectorMasterTable;
+
+    LET vLatestVersion = Peek('version',0,'Version');
+    LET vIsLatestVersion = If('$(vLatestVersion)'='v$(app_version)',1,0);
+
+    DROP TABLE Version;
+
+END SUB
+///$tab Tenant Metadata
+SUB get_tenant_metadata
+
+    LIB CONNECT TO '$(vu_rest_connection)';
+
+    RestConnectorMasterTable:
+    SQL SELECT 
+        "__KEY_root",
+        (SELECT 
+            "id",
+            "name",
+            "datacenter",
+            "created",
+            "status",
+            "__FK_data",
+            "__KEY_data",
+            (SELECT 
+                "@Value",
+                "__FK_hostnames"
+            FROM "hostnames" FK "__FK_hostnames" ArrayValueAlias "@Value")
+        FROM "data" PK "__KEY_data" FK "__FK_data")
+    FROM JSON (wrap on) "root" PK "__KEY_root"
+    WITH CONNECTION (  
+      URL "https://$(vu_tenant_fqdn)/api/v1/tenants"
+    );
+
+    [Hostname]:
+    LOAD	
+        [@Value] AS Hostname
+    RESIDENT RestConnectorMasterTable
+    WHERE NOT IsNull([__FK_hostnames]);
+
+
+    [TenantMetadata]:
+    LOAD	
+        [id] AS TenantID,
+        [name] AS TenantName,
+        [datacenter] AS TenantDataCenter,
+        Date([created]) AS TenantCreatedDate,
+        [status] AS TenantStatus,
+        Peek('Hostname',0,'Hostname') AS Hostname,
+        TimeStamp('$(vStartTime)') AS LastReloadStartTime
+    RESIDENT RestConnectorMasterTable
+    WHERE NOT IsNull([__FK_data]);
+
+    DROP TABLE Hostname;
+    DROP TABLE RestConnectorMasterTable;
+
+    LET vTenantID = Peek('TenantID',0,'TenantMetadata');
+
+END SUB
+///$tab Get User Field
+SUB get_user_field
+
+    Lookup_UserVariable_FieldName:
+    LOAD * INLINE [
+        UserVariable	,FieldName
+        id				,userId
+        subject			,userSubject
+        email			,email
+        name			,name
+    ];
+
+    IF Match(Lower('$(vu_personal_space_user_field)'),$(vu_personal_space_user_list)) THEN
+
+        TRACE Using '$(vu_personal_space_user_field)' to construct 'Personal' space names;
+
+        LET vPersonalUserField = Lookup('FieldName','UserVariable',Lower('$(vu_personal_space_user_field)'),'Lookup_UserVariable_FieldName');
+
+    Else
+
+        TRACE The value for the variable 'vu_personal_space_user_field' must contain one of: $(vu_personal_space_user_list);
+        TRACE The value found was: '$(vu_personal_space_user_field)';
+        TRACE Defaulting to 'Subject';
+
+        SET vPersonalUserField = 'userSubject';
+
+    END IF
+    
+    DROP TABLE Lookup_UserVariable_FieldName;
+  
+END SUB
+///$tab Usage Consumption
+Sub get_consumption
+
+    If incremental_qvds_available=1 then   // If incremental QVDs are available -- this is set in the "configuration" section of script
+        LET vLoaded_Max_endTime = '$(output_qvd_name(Consumption,$(app_version)))';
+        Max_endTime:
+        LOAD
+                 Replace(timestamp(max(endTime),'YYYY-MM-DD hh:mm:ssZ'),' ','T') AS maxEndTime
+        FROM '$(vLoaded_Max_endTime)'(qvd); 
+
+        LET vMax_endTime = If(NOT IsNull(Peek('maxEndTime',0,'Max_endTime')),Peek('maxEndTime',0,'Max_endTime'),'$(Month_Start)'); // handle for if the QVD is empty
+
+        DROP TABLE Max_endTime;
+        SET vParams = 'filter=(endTime ge %22$(vMax_endTime)%22)&limit=100';
+
+        Do
+
+            LIB CONNECT TO '$(vu_rest_connection)';
+
+            RestConnectorMasterTable:
+            SQL SELECT 
+                "__KEY_root",
+                (SELECT 
+                    "id",
+                    "userId",
+                    "sessionId",
+                    "appId",
+                    "endTime",
+                    "duration",
+                    "allotmentId",
+                    "capacityUsed",
+                    "minutesUsed",
+                    "licenseUsage",
+                    "__FK_data"
+                FROM "data" FK "__FK_data"),
+                (SELECT 
+                    "__KEY_links",
+                    "__FK_links",
+                    (SELECT 
+                        "href",
+                        "__FK_next"
+                    FROM "next" FK "__FK_next"),
+                    (SELECT 
+                        "href" AS "href_u0",
+                        "__FK_prev"
+                    FROM "prev" FK "__FK_prev")
+                FROM "links" PK "__KEY_links" FK "__FK_links")
+            FROM JSON (wrap on) "root" PK "__KEY_root"
+            WITH CONNECTION (  
+            URL "https://$(vu_tenant_fqdn)/api/v1/licenses/consumption?$(vParams)"
+              );
+
+            [Consumption]:
+            LOAD
+            	'$(vTenantID)' AS TenantID,
+                [id],
+                [userId],
+                [id] AS [sessionId], // the sessionId field is repeated across apps, whereas id is unique -- using as sessionId
+                [appId],
+                [endTime],
+                Dual(Month(Floor(endTime))&' '&Year(Floor(endTime)),Num(MonthEnd(endTime))) AS %MonthKey,
+                '$(vTenantID)' &'_'& Month(Floor(endTime))&' '&Year(Floor(endTime)) AS %TenantMonthKey,
+                [duration],
+                round(duration/60000)AS [durationMinutes],
+                [allotmentId],
+                [capacityUsed],
+                [minutesUsed],
+                [licenseUsage]
+            RESIDENT RestConnectorMasterTable
+            WHERE NOT IsNull([__FK_data]);
+
+            NextURL:
+            Load DISTINCT 
+              	[href] AS NextURL
+            Resident RestConnectorMasterTable
+            Where  NOT match(href,'');
+            Drop Table RestConnectorMasterTable;
+
+            LET vParams = SubField(Peek('NextURL',0,'NextURL'),'?',-1);
+            LET vNextURLRows = NoOfRows('NextURL');
+
+            Drop Table NextURL;
+
+            Loop while $(vNextURLRows)>0;
+
+            Trace Calling load_qvd on Consumption;
+            Call load_qvd('Consumption')
+            Trace Calling store_qvd on Consumption;
+            Call store_qvd('Consumption')
+
+		ELSE
+
+            SET vParams = 'filter=(endTime ge %22$(Month_Start)%22)&limit=100';
+
+            Do
+
+              LIB CONNECT TO '$(vu_rest_connection)';
+
+              RestConnectorMasterTable:
+              SQL SELECT 
+                  "__KEY_root",
+                  (SELECT 
+                      "id",
+                      "userId",
+                      "sessionId",
+                      "appId",
+                      "endTime",
+                      "duration",
+                      "allotmentId",
+                      "capacityUsed",
+                      "minutesUsed",
+                      "licenseUsage",
+                      "__FK_data"
+                  FROM "data" FK "__FK_data"),
+                  (SELECT 
+                      "__KEY_links",
+                      "__FK_links",
+                      (SELECT 
+                          "href",
+                          "__FK_next"
+                      FROM "next" FK "__FK_next"),
+                      (SELECT 
+                          "href" AS "href_u0",
+                          "__FK_prev"
+                      FROM "prev" FK "__FK_prev")
+                  FROM "links" PK "__KEY_links" FK "__FK_links")
+              FROM JSON (wrap on) "root" PK "__KEY_root"
+              WITH CONNECTION (  
+                  URL "https://$(vu_tenant_fqdn)/api/v1/licenses/consumption?$(vParams)"
+                );
+
+              [Consumption]:
+              LOAD
+              	  '$(vTenantID)' AS TenantID,
+                  [id],
+                  [userId],
+                  [id] AS [sessionId], // the sessionId field is repeated across apps, whereas id is unique -- using as sessionId
+                  [appId],
+                  [endTime], 
+                  Dual(Month(Floor(endTime))&' '&Year( Floor(endTime)),Num(MonthEnd(endTime))) AS %MonthKey,
+                  '$(vTenantID)' &'_'& Month(Floor(endTime))&' '&Year(Floor(endTime)) AS %TenantMonthKey,
+                  [duration],
+                  round(duration/60000)AS [durationMinutes],
+                  [allotmentId],
+                  [capacityUsed],
+                  [minutesUsed],
+                  [licenseUsage]
+              RESIDENT RestConnectorMasterTable
+              WHERE NOT IsNull([__FK_data]);
+
+              NextURL:
+              Load	DISTINCT 
+                  [href] AS NextURL
+              Resident RestConnectorMasterTable
+              Where  NOT match(href,'');
+              Drop Table RestConnectorMasterTable;
+
+
+              LET vParams = SubField(Peek('NextURL',0,'NextURL'),'?',-1);
+              LET vNextURLRows = NoOfRows('NextURL');
+
+              Drop Table NextURL;
+
+          Loop while $(vNextURLRows)>0;
+
+          Trace Calling store_qvd on Consumption;
+          CALL store_qvd('Consumption');
+
+      ENDIF;
+
+End Sub
+///$tab Consumption Overview
+Sub get_consumption_overview
+
+    If incremental_qvds_available=1 then   // If incremental QVDs are available -- this is set in the "configuration" section of script
+        LET vLoaded_Months = '$(output_qvd_name(Consumption_Overview,$(app_version)))';
+        LET vCurrent_Month = Dual(Month(Floor(now(1)))&' '&Year( Floor(now(1))),Num(MonthEnd(now(1))));
+        //LET vCurrent_Month = Date(monthend(now(1)),'MMM YYYY');
+        Month_To_Check:
+        LOAD DISTINCT
+            Date(max(allotmentMonth),'MMM YYYY') AS CheckMonth
+        FROM '$(vLoaded_Months)'(qvd);
+
+        LET vMonth_To_Check= Peek('CheckMonth',0,'Month_To_Check');
+        DROP TABLE Month_To_Check;
+
+        IF vCurrent_Month > vMonth_To_Check THEN
+
+            LIB CONNECT TO '$(vu_rest_connection)';
+
+            RestConnectorMasterTable:
+            SQL SELECT 
+                "licenseNumber",
+                "licenseKey",
+                "valid" AS "valid_u0",
+                "status",
+                "origin",
+                "trial",
+                "product",
+                "__KEY_root",
+                (SELECT 
+                    "name",
+                    "usageClass",
+                    "units",
+                    "unitsUsed",
+                    "overage",
+                    "__FK_allotments"
+                FROM "allotments" FK "__FK_allotments"),
+                (SELECT 
+                    "name" AS "name_u0",
+                    "valid",
+                    "__KEY_parameters",
+                    "__FK_parameters",
+                    (SELECT 
+                        "saas_alerting",
+                        "count",
+                        "geoanalytics",
+                        "quantity",
+                        "value",
+                        "__FK_values"
+                    FROM "values" FK "__FK_values")
+                FROM "parameters" PK "__KEY_parameters" FK "__FK_parameters")
+            FROM JSON (wrap on) "root" PK "__KEY_root"
+            WITH CONNECTION (  
+            URL "https://$(vu_tenant_fqdn)/api/v1/licenses/overview");
+
+            [Consumption_Overview]:
+            LOAD
+            	'$(vTenantID)' AS TenantID,
+                [name] AS license_name,
+                [usageClass],
+                [units],
+                Dual(Month(Floor(now(1)))&' '&Year( Floor(now(1))),Num(MonthEnd(now(1)))) AS allotmentMonth,
+                [unitsUsed],
+                [overage]
+            RESIDENT RestConnectorMasterTable
+            WHERE NOT IsNull([__FK_allotments]);
+
+            DROP TABLE RestConnectorMasterTable;
+
+            Trace Calling load_qvd on Consumption_Overview;
+            Call load_qvd('Consumption_Overview')
+            Trace Calling store_qvd on Consumption_Overview;
+            Call store_qvd('Consumption_Overview')
+
+        ELSE 
+
+            Trace Calling load_qvd on Consumption_Overview_Not_Current_Month;
+            Call load_qvd_Consumption_Overview_Not_Current_Month;
+
+            //Grab current month straight from the source
+            LIB CONNECT TO '$(vu_rest_connection)';
+
+            RestConnectorMasterTable:
+            SQL SELECT 
+                "licenseNumber",
+                "licenseKey",
+                "valid" AS "valid_u0",
+                "status",
+                "origin",
+                "trial",
+                "product",
+                "__KEY_root",
+                (SELECT 
+                    "name",
+                    "usageClass",
+                    "units",
+                    "unitsUsed",
+                    "overage",
+                    "__FK_allotments"
+                FROM "allotments" FK "__FK_allotments"),
+                (SELECT 
+                    "name" AS "name_u0",
+                    "valid",
+                    "__KEY_parameters",
+                    "__FK_parameters",
+                    (SELECT 
+                        "saas_alerting",
+                        "count",
+                        "geoanalytics",
+                        "quantity",
+                        "value",
+                        "__FK_values"
+                    FROM "values" FK "__FK_values")
+                FROM "parameters" PK "__KEY_parameters" FK "__FK_parameters")
+            FROM JSON (wrap on) "root" PK "__KEY_root"
+            WITH CONNECTION (  
+            URL "https://$(vu_tenant_fqdn)/api/v1/licenses/overview");
+
+            [Consumption_Overview]:
+            LOAD
+            	'$(vTenantID)' AS TenantID,
+                [name] AS license_name,
+                [usageClass],
+                [units],
+                Dual(Month(Floor(now(1)))&' '&Year( Floor(now(1))),Num(MonthEnd(now(1)))) AS allotmentMonth,
+                [unitsUsed],
+                [overage]
+            RESIDENT RestConnectorMasterTable
+            WHERE NOT IsNull([__FK_allotments]);
+
+            DROP TABLE RestConnectorMasterTable;
+            
+            Trace Calling store_qvd on Consumption_Overview;
+            Call store_qvd('Consumption_Overview')
+
+        ENDIF;
+
+    ELSE
+
+        LIB CONNECT TO '$(vu_rest_connection)';
+
+        RestConnectorMasterTable:
+        SQL SELECT 
+            "licenseNumber",
+            "licenseKey",
+            "valid" AS "valid_u0",
+            "status",
+            "origin",
+            "trial",
+            "product",
+            "__KEY_root",
+            (SELECT 
+                "name",
+                "usageClass",
+                "units",
+                "unitsUsed",
+                "overage",
+                "__FK_allotments"
+            FROM "allotments" FK "__FK_allotments"),
+            (SELECT 
+                "name" AS "name_u0",
+                "valid",
+                "__KEY_parameters",
+                "__FK_parameters",
+                (SELECT 
+                    "saas_alerting",
+                    "count",
+                    "geoanalytics",
+                    "quantity",
+                    "value",
+                    "__FK_values"
+                FROM "values" FK "__FK_values")
+            FROM "parameters" PK "__KEY_parameters" FK "__FK_parameters")
+        FROM JSON (wrap on) "root" PK "__KEY_root"
+        WITH CONNECTION (  
+           URL "https://$(vu_tenant_fqdn)/api/v1/licenses/overview");
+
+        [Consumption_Overview]:
+        LOAD
+        	'$(vTenantID)' AS TenantID,
+            [name] AS license_name,
+            [usageClass],
+            [units],
+            Dual(Month(Floor(now(1)))&' '&Year( Floor(now(1))),Num(MonthEnd(now(1)))) AS allotmentMonth,
+            [unitsUsed],
+            [overage]
+        RESIDENT RestConnectorMasterTable
+        WHERE NOT IsNull([__FK_allotments]);	
+
+        DROP TABLE RestConnectorMasterTable;
+
+        Trace Calling store_qvd on Consumption_Overview;
+        Call store_qvd('Consumption_Overview')
+
+    ENDIF;
+
+End Sub;
+///$tab Users
+Sub get_users
+
+	SET vParams = 'limit=100';
+    
+  	Do
+
+        LIB CONNECT TO '$(vu_rest_connection)';
+
+        RestConnectorMasterTable:
+        SQL SELECT 
+            "__KEY_root",
+            (SELECT 
+                "__KEY_links",
+                "__FK_links",
+                (SELECT 
+                    "href",
+                    "__FK_self"
+                FROM "self" FK "__FK_self"),
+                (SELECT 
+                    "href" AS "href_u0",
+                    "__FK_next"
+                FROM "next" FK "__FK_next")
+            FROM "links" PK "__KEY_links" FK "__FK_links"),
+            (SELECT 
+                "id",
+                "tenantId",
+                "created",
+                "lastUpdated",
+                "status",
+                "name",
+                "subject",
+                "email",
+                "zoneinfo",
+                "locale",
+                "preferredLocale",
+                "__KEY_data",
+                "__FK_data",
+                (SELECT 
+                    "@Value",
+                    "__FK_roles"
+                FROM "roles" FK "__FK_roles" ArrayValueAlias "@Value"),
+                (SELECT 
+                    "__KEY_links_u0",
+                    "__FK_links_u0",
+                    (SELECT 
+                        "href" AS "href_u1",
+                        "__FK_self_u0"
+                    FROM "self" FK "__FK_self_u0")
+                FROM "links" PK "__KEY_links_u0" FK "__FK_links_u0")
+            FROM "data" PK "__KEY_data" FK "__FK_data")
+        FROM JSON (wrap on) "root" PK "__KEY_root"
+        WITH CONNECTION (  
+            URL "https://$(vu_tenant_fqdn)/api/v1/users?$(vParams)"
+        );
+
+        [Users]:
+        LOAD
+            trim([id]) AS userId,
+            [name],    
+            [email],
+            Lower(subject) AS userSubject // have to do this as users and assigments API case varies on subject
+        RESIDENT RestConnectorMasterTable
+        WHERE NOT IsNull([__FK_data]);
+
+        NextURL:
+        Load	
+            [href_u0] AS NextURL
+        Resident RestConnectorMasterTable
+        Where not IsNull([__FK_next]);
+
+        Drop Table RestConnectorMasterTable;
+
+        LET vParams = SubField(Peek('NextURL',0,'NextURL'),'?',-1);
+        LET vNextURLRows = NoOfRows('NextURL');
+        Drop Table NextURL;
+
+	Loop while $(vNextURLRows)>0;
+
+    LEFT JOIN (Consumption)
+    LOAD
+        *
+    RESIDENT Users;   
+    
+    Map_UserSubject_InUsers:
+    MAPPING LOAD DISTINCT
+    	userSubject,
+        1
+    RESIDENT Users;
+    
+    Map_UserSubject_Name:
+    MAPPING LOAD DISTINCT
+    	userSubject,
+        name
+    RESIDENT Users;
+    
+    Map_UserId_UserName:
+    MAPPING LOAD DISTINCT
+    	userId,
+        name
+    RESIDENT Users;
+    
+    Map_UserId_UserSubject:
+    MAPPING LOAD DISTINCT
+    	userId,
+        userSubject
+    RESIDENT Users;
+    
+    // Used for Mapping later for multi-tenant once all tenants are loaded
+    UserId_UserSubject:
+    LOAD DISTINCT
+    	userId,
+        userSubject
+    RESIDENT Users;
+    
+    Call get_user_field
+    
+    Map_UserID_$(vPersonalUserField):
+    MAPPING LOAD DISTINCT
+        userId,
+        $(vPersonalUserField)
+    RESIDENT Users;
+
+End Sub;
+
+
+///$tab Assignments
+Sub get_assignments ;
+
+    If incremental_qvds_available=1 then   // If incremental QVDs are available -- this is set in the "configuration" section of script
+        LET vLoaded_Max_CreatedTime = '$(output_qvd_name(Assignments,$(app_version)))';
+        Max_CreatedTime:
+        LOAD
+        	Replace(timestamp(max(created),'YYYY-MM-DD hh:mm:ssZ'),' ','T') AS maxCreated
+        FROM '$(vLoaded_Max_CreatedTime)'(qvd); 
+
+        LET vMax_CreatedTime = Peek('maxCreated',0,'Max_CreatedTime');
+
+        DROP TABLE Max_CreatedTime;
+
+        SET vParams = 'limit=100';
+        
+      	Do
+
+			LIB CONNECT TO '$(vu_rest_connection)';
+
+            RestConnectorMasterTable:
+            SQL SELECT 
+                "__KEY_root",
+                (SELECT 
+                    "subject",
+                    "type",
+                    "excess",
+                    "created",
+                    "__FK_data"
+                FROM "data" FK "__FK_data"),
+                (SELECT 
+                    "__KEY_links",
+                    "__FK_links",
+                    (SELECT 
+                        "href",
+                        "__FK_next"
+                    FROM "next" FK "__FK_next"),
+                    (SELECT 
+                        "href" AS "href_u0",
+                        "__FK_prev"
+                    FROM "prev" FK "__FK_prev")
+                FROM "links" PK "__KEY_links" FK "__FK_links")
+            FROM JSON (wrap on) "root" PK "__KEY_root"
+            WITH CONNECTION (  
+                URL "https://$(vu_tenant_fqdn)/api/v1/licenses/assignments?filter=(created ge %22$(vMax_CreatedTime)%22)&$(vParams)");
+
+			// Get list of all assignments where the user subject exists in this tenant after the last created time
+            [Assignments]:
+            LOAD
+            	'$(vTenantID)' AS TenantID,
+                Lower([subject]) AS subject, // have to do this as users and assigments API case varies on subject
+                [type],
+                // deprecated [userId] AS [assigneeUserId],
+                Lower([subject]) AS UserIdMaster,
+                // deprecated [name], 
+                [excess],
+                [created]
+            RESIDENT RestConnectorMasterTable
+            WHERE NOT IsNull([__FK_data])
+            AND ApplyMap('Map_UserSubject_InUsers',Lower([subject]))=1;
+
+            NextURL:
+            Load DISTINCT 
+                [href] AS NextURL
+            Resident RestConnectorMasterTable
+            Where  NOT match(href,'');
+            Drop Table RestConnectorMasterTable;
+
+
+            LET vParams = SubField(Peek('NextURL',0,'NextURL'),'?',-1);
+            LET vNextURLRows = NoOfRows('NextURL');
+            Drop Table NextURL;
+
+		Loop while $(vNextURLRows)>0;
+
+        Trace Calling load_qvd on Assignments;
+        Call load_qvd('Assignments')
+        Trace Calling store_qvd on Assignments;
+        Call store_qvd('Assignments')
+
+	ELSE
+
+		SET vParams = 'limit=100';
+        
+  		Do
+
+            LIB CONNECT TO '$(vu_rest_connection)';
+
+            RestConnectorMasterTable:
+            SQL SELECT 
+                "__KEY_root",
+                (SELECT 
+                    "subject",
+                    "type",
+                    "excess",
+                    "created",
+                    "__FK_data"
+                FROM "data" FK "__FK_data"),
+                (SELECT 
+                    "__KEY_links",
+                    "__FK_links",
+                    (SELECT 
+                        "href",
+                        "__FK_next"
+                    FROM "next" FK "__FK_next"),
+                    (SELECT 
+                        "href" AS "href_u0",
+                        "__FK_prev"
+                    FROM "prev" FK "__FK_prev")
+                FROM "links" PK "__KEY_links" FK "__FK_links")
+            FROM JSON (wrap on) "root" PK "__KEY_root"
+            WITH CONNECTION (  
+                URL "https://$(vu_tenant_fqdn)/api/v1/licenses/assignments?$(vParams)");
+
+			// Get list of all assignments where the user subject exists in this tenant
+            [Assignments]:
+            LOAD
+            	'$(vTenantID)' AS TenantID,
+                Lower([subject]) AS subject, // have to do this as users and assigments API case varies on subject
+                [type],
+                // deprecated [userId] AS [assigneeUserId],
+                Lower([subject]) AS UserIdMaster,
+                // deprecated [name], 
+                [excess],
+                [created]
+            RESIDENT RestConnectorMasterTable
+            WHERE NOT IsNull([__FK_data])
+            AND ApplyMap('Map_UserSubject_InUsers',Lower([subject]))=1;
+
+            NextURL:
+            Load DISTINCT 
+                [href] AS NextURL
+            Resident RestConnectorMasterTable
+            Where  NOT match(href,'');
+            Drop Table RestConnectorMasterTable;
+
+            LET vParams = SubField(Peek('NextURL',0,'NextURL'),'?',-1);
+            LET vNextURLRows = NoOfRows('NextURL');
+            
+    		Drop Table NextURL;
+
+		Loop while $(vNextURLRows)>0;
+  
+        Trace Calling store_qvd on Assignments;
+        CALL store_qvd('Assignments');
+
+	END IF;
+    
+    Map_UserSubject_InAssignments:
+    MAPPING LOAD DISTINCT
+    	subject,
+        1
+    RESIDENT Assignments;
+    
+    // Fill unassigned users in Assignments
+    CONCATENATE (Assignments)
+    LOAD DISTINCT
+    	'$(vTenantID)' AS TenantID,
+        userSubject AS subject,
+        'unassigned' as type,
+    	// deprecated userId AS assigneeUserId,
+        userSubject AS UserIdMaster,
+        ApplyMap('Map_UserSubject_Name',Lower([userSubject])) AS assigneeName
+    RESIDENT Users
+    WHERE ApplyMap('Map_UserSubject_InAssignments',[userSubject])<>1;
+
+    DROP TABLE Users;
+    
+END SUB;
+
+///$tab Current Assignments
+Sub get_current_assignments ;
+
+    SET vParams = 'limit=100';
+
+    Do
+
+        LIB CONNECT TO '$(vu_rest_connection)';
+
+        RestConnectorMasterTable:
+        SQL SELECT 
+            "__KEY_root",
+            (SELECT 
+                "subject",
+                "type",
+                "excess",
+                "created",
+                "__FK_data"
+            FROM "data" FK "__FK_data"),
+            (SELECT 
+                "__KEY_links",
+                "__FK_links",
+                (SELECT 
+                    "href",
+                    "__FK_next"
+                FROM "next" FK "__FK_next"),
+                (SELECT 
+                    "href" AS "href_u0",
+                    "__FK_prev"
+                FROM "prev" FK "__FK_prev")
+            FROM "links" PK "__KEY_links" FK "__FK_links")
+        FROM JSON (wrap on) "root" PK "__KEY_root"
+        WITH CONNECTION (  
+            URL "https://$(vu_tenant_fqdn)/api/v1/licenses/assignments?$(vParams)");
+
+		// used to get most recent names for all users
+        [CurrentAssignments]:
+        LOAD
+            [type] AS CurrentAssigneeType,
+            // deprecated [userId] AS CurrentAssigneeId, 
+            // deprecated [name], 
+            ApplyMap('Map_UserSubject_Name',Lower([subject])) AS CurrentAssigneeName,
+            Lower([subject]) AS [userSubject] // have to do this as users and assigments API case varies on subject
+        RESIDENT RestConnectorMasterTable
+        WHERE NOT IsNull([__FK_data]);
+
+        NextURL:
+        Load DISTINCT 
+            [href] AS NextURL
+        Resident RestConnectorMasterTable
+        Where  NOT match(href,'');
+        Drop Table RestConnectorMasterTable;
+
+
+        LET vParams = SubField(Peek('NextURL',0,'NextURL'),'?',-1);
+        LET vNextURLRows = NoOfRows('NextURL');
+        Drop Table NextURL;
+
+    Loop while $(vNextURLRows)>0;
+
+END SUB;
+
+///$tab Spaces
+Sub get_spaces
+
+	SET vParams = 'limit=100';  
+    
+    [Spaces]:
+    Load * Inline [SpaceID];
+
+  	Do
+  
+        LIB Connect To '$(vu_rest_connection)';
+
+        RestConnectorMasterTable:
+        SQL SELECT 
+            "__KEY_root",
+            (SELECT 
+                "id",
+                "type",
+                "ownerId",
+                "tenantId",
+                "name",
+                "description",
+                "createdAt",
+                "createdBy",
+                "updatedAt",
+                "__KEY_data",
+                "__FK_data",
+                (SELECT 
+                    "__KEY_meta",
+                    "__FK_meta"
+                FROM "meta" PK "__KEY_meta" FK "__FK_meta"),
+                (SELECT 
+                    "__KEY_links",
+                    "__FK_links"
+                FROM "links" PK "__KEY_links" FK "__FK_links")
+            FROM "data" PK "__KEY_data" FK "__FK_data"),
+            (SELECT 
+                "__KEY_links_u0",
+                "__FK_links_u0",
+                (SELECT 
+                    "href" AS "href_u2",
+                    "__FK_next"
+                FROM "next" FK "__FK_next")
+            FROM "links" PK "__KEY_links_u0" FK "__FK_links_u0")
+        FROM JSON (wrap on) "root" PK "__KEY_root"
+        WITH CONNECTION (  
+          URL "https://$(vu_tenant_fqdn)/api/v1/spaces?$(vParams)"
+        );
+
+        Concatenate (Spaces)
+        Load	
+            [id] AS SpaceID,
+            Capitalize([type]) AS SpaceType,
+            [name] AS SpaceName
+        Resident RestConnectorMasterTable
+        Where not IsNull([__FK_data]);
+
+        NextURL:
+        Load	
+        	[href_u2] AS NextURL
+        Resident RestConnectorMasterTable
+        Where not IsNull([__FK_next]);
+
+        Drop Table RestConnectorMasterTable;
+
+        LET vParams = SubField(Peek('NextURL',0,'NextURL'),'?',-1);
+        LET vNextURLRows = NoOfRows('NextURL');
+
+        Drop Table NextURL;
+    
+	Loop while $(vNextURLRows)>0;
+
+    AllSpacesMap:
+    Mapping Load Distinct
+        SpaceID,
+        1
+    Resident Spaces;
+    
+    Map_SpaceID_SpaceName:
+    Mapping Load Distinct
+        SpaceID,
+        Text(SpaceName) AS SpaceName
+    Resident Spaces;
+
+End Sub
+
+///$tab Apps
+Sub get_apps
+
+	SET vParams = 'limit=100&resourceType=app,qvapp&noActions=true';
+  
+  	Do
+  
+        LIB Connect to '$(vu_rest_connection)';
+
+        RestConnectorMasterTable:
+        SQL SELECT 
+            "__KEY_root",
+            (SELECT 
+                "name" AS "name_u0",
+                "resourceCustomAttributes",
+                "resourceUpdatedAt",
+                "resourceType",
+                "resourceId",
+                "resourceCreatedAt",
+                "id" AS "id_u0",
+                "createdAt",
+                "updatedAt",
+                "creatorId",
+                "updaterId",
+                "tenantId",
+                "isFavorited" AS "isFavorited_u0",
+                "ownerId" AS "ownerId_u0",
+                "description" AS "description_u0",
+                "__KEY_data",
+                "__FK_data",
+                (SELECT 
+                    "_resourcetype",
+                    "createdDate",
+                    "description",
+                    "dynamicColor",
+                    "hasSectionAccess",
+                    "id",
+                    "lastReloadTime",
+                    "modifiedDate",
+                    "name",
+                    "originAppId",
+                    "owner",
+                    "ownerId",
+                    "publishTime",
+                    "published",
+                    "spaceId",
+                    "thumbnail",
+                    "encrypted",
+                    "__FK_resourceAttributes"
+                FROM "resourceAttributes" FK "__FK_resourceAttributes"),
+                (SELECT 
+                    "__KEY_links",
+                    "__FK_links"
+                FROM "links" PK "__KEY_links" FK "__FK_links"),
+                (SELECT 
+                    "__KEY_meta",
+                    "__FK_meta"
+                FROM "meta" PK "__KEY_meta" FK "__FK_meta")
+            FROM "data" PK "__KEY_data" FK "__FK_data"),
+            (SELECT 
+                "__KEY_links_u0",
+                "__FK_links_u0",
+                (SELECT 
+                    "href" AS "href_u4",
+                    "__FK_next"
+                FROM "next" FK "__FK_next")
+            FROM "links" PK "__KEY_links_u0" FK "__FK_links_u0")
+        FROM JSON (wrap on) "root" PK "__KEY_root"
+        WITH CONNECTION (  
+        	URL "https://$(vu_tenant_fqdn)/api/v1/items?$(vParams)"
+        );
+
+
+        [Apps]:
+        Load	
+            [name_u0] AS AppName,
+            [resourceId] AS appId
+         Resident RestConnectorMasterTable
+        Where not IsNull([__FK_data])
+        and Exists(appId,[resourceId]) ;
+
+        AppDetails:
+        Load	
+            [id] AS appId,
+            ApplyMap('Map_UserId_UserName',ownerId,'[Unknown]') AS AppOwnerName,
+//             [owner] AS AppOwnerName,
+//             If(ApplyMap('AllSpacesMap',spaceId)<>1,'Personal',spaceId) AS SpaceID,
+            If(ApplyMap('AllSpacesMap',spaceId)<>1,
+                If(Len(ApplyMap('Map_UserID_$(vPersonalUserField)',ownerId))>0,
+                    'Personal - ' & ApplyMap('Map_UserID_$(vPersonalUserField)',ownerId),
+                    '[Staged]'
+                   ),
+                spaceId
+                ) as SpaceID
+        Resident RestConnectorMasterTable
+        Where not IsNull([__FK_resourceAttributes]) AND EXISTS(appId,[id]);
+
+        NextURL:
+        Load	
+            [href_u4] AS NextURL
+        Resident RestConnectorMasterTable
+        Where not IsNull([__FK_next]);
+
+        Drop Table RestConnectorMasterTable;
+
+        LET vParams = SubField(Peek('NextURL',0,'NextURL'),'?',-1);
+        LET vNextURLRows = NoOfRows('NextURL');
+
+        Drop Table NextURL;
+
+	Loop while $(vNextURLRows)>0;
+    
+    Concatenate(Spaces)
+    Load Distinct
+        SpaceID,
+        SpaceID as SpaceName,
+        'Personal' as SpaceType
+    Resident AppDetails
+    Where WildMatch(SpaceID,'Personal - *');
+  
+END SUB;
+///$tab Multi-Tenant
+Sub write_tenant_qvds(location, sub_dir, name, is_parent)
+  	Trace Storing QlikMetaCollection QVDs.;
+  
+  	LET location = If(Right('$(location)',1)='/',Left('$(location)',Len('$(location)')-1),'$(location)');
+  
+  	If $(is_parent)=0 then
+  		LET vFullLocation = '$(location)/QlikMetaCollection/Tenants/$(vTenantID)/$(sub_dir)/$(name)';
+  	Else
+  		LET vFullLocation = '$(location)/QlikMetaCollection/CompiledTenants/$(sub_dir)/$(name)';
+  	End if
+
+  	For i = 0 to NoOfTables()-1
+    	LET vTableName = TableName($(i));
+    	Trace Storing $(vTableName).;
+    	Store $(vTableName) Into [$(vFullLocation)/$(vTableName).qvd](qvd);
+    	Trace $(vTableName) stored!;
+  	Next i
+  
+End Sub
+
+Sub load_multi_tenant_qvds(location, sub_dir, name)
+
+	LET vDirLocation = If(Right('$(location)',1)='/',Left('$(location)',Len('$(location)')-1),'$(location)');
+    LET vAnyFileFound = 0;
+
+	LET vTenants = 1;
+	For Each Dir in DirList('$(vDirLocation)/QlikMetaCollection/Tenants/')
+
+	  	LET vFolder = '$(Dir)$(sub_dir)/$(name)/';
+      	LET vTenant = TextBetween('$(vFolder)','$(vDirLocation)/','/$(sub_dir)/');
+      	Trace --------------------;
+      	Trace Looking to load data for Tenant: $(vTenant);
+      	Trace --------------------;
+
+	  LET vTenantFileFound = 0;
+      For Each file in FileList('$(vFolder)')
+        	If WildMatch('$(file)','*.qvd') THEN
+          		LET vAnyFileFound = 1;
+          		LET vTenantFileFound = 1;
+          
+	      		LET vTableName = TextBetween(Subfield('$(file)','/',-1),Null(),'.qvd');
+          		"$(vTableName)":
+          		Load Distinct
+              		*
+          		From [$(file)](qvd);
+        	End If
+      Next file
+      
+      If $(vTenantFileFound) then
+      		Trace Completed loading QVDs for Tenant: $(vTenant);
+      		LET vTenants = $(vTenants) + 1;
+      Else
+        	Trace No QVDs were found for Tenant: $(vTenant);
+      End If
+              
+    Next Dir
+    
+    LET vTenants = $(vTenants) - 1;
+    
+    If $(vAnyFileFound)>0 then
+      	Trace --------------------;
+      	Trace Successfully loaded data from $(vTenants) Tenants!;
+      	Trace --------------------;
+    Else
+      	Trace --------------------;
+      	Trace No QVDs were Found! Confirm that this directory is the parent directory of "QlikMetaCollection".;
+      	Trace --------------------;
+    End If
+
+End Sub
+///$tab Transformation Logic
+Sub load_transformation_logic
+
+	// AUTONUMBER
+    LEFT JOIN(Apps)
+    LOAD
+    	appId,
+        Dual(AppName,AutoNumber(appId)) AS AppNameUnique
+    RESIDENT Apps;
+    
+    LEFT JOIN(Spaces)
+    LOAD
+    	SpaceID,
+        Dual(SpaceName,AutoNumber(SpaceID)) as SpaceNameUnique
+    RESIDENT Spaces;
+    
+    // JOIN APPS AND SPACES TO CONSUMPTION
+    LEFT JOIN (Consumption)
+    LOAD
+    	*
+    RESIDENT Apps;
+
+  	DROP TABLE Apps;
+
+    LEFT JOIN (Consumption)
+    LOAD
+    	*
+    RESIDENT AppDetails;
+
+	DROP TABLE AppDetails;
+  
+    LEFT JOIN (Consumption)
+    LOAD
+    	*
+    RESIDENT Spaces;
+   	DROP TABLE Spaces;
+
+    //MAPPING TABLES===
+    userSubjectToAssignments:
+    MAPPING
+    LOAD
+        [subject] AS From,
+        type AS To
+    RESIDENT Assignments
+    WHERE Match(type,'professional','analyzer');
+
+    userSubjectToCreated:
+    MAPPING
+    LOAD
+        [subject] AS From,
+        [created] AS To
+    RESIDENT Assignments;
+
+    Map_UnitUsedPerMonth:
+    MAPPING
+    LOAD
+        %TenantMonthKey AS From,
+        Sum(minutesUsed) AS To
+    RESIDENT Consumption
+    GROUP BY %TenantMonthKey;
+    
+    Map_UserId_UserSubject:
+    MAPPING
+    LOAD DISTINCT
+    	userId,
+        userSubject
+    RESIDENT UserId_UserSubject;
+    
+    DROP TABLE UserId_UserSubject;
+    
+    Map_UserSubject_UserAssignmentName:
+    MAPPING
+    LOAD DISTINCT
+    	userSubject,
+        CurrentAssigneeName
+    RESIDENT CurrentAssignments;
+    
+    //===
+    // Consumption Overview
+
+    [Overview]:
+    LOAD
+        TenantID&'_'&allotmentMonth&'_'&license_name AS %OverviewKey,
+        TenantID AS TenantIDOverviewTemp,
+        license_name,
+        [usageClass],
+        [units],
+        allotmentMonth,
+        if(license_name='analyzer_time', ApplyMap('Map_UnitUsedPerMonth',TenantID&'_'&allotmentMonth),[unitsUsed]) AS [unitsUsed],
+        [overage]
+    RESIDENT Consumption_Overview;
+
+    DROP TABLE Consumption_Overview;
+    
+    //===
+
+    //===
+    
+    // If _not_ "Parent" mode, calculate the concurrency minutes, 
+    // else the resulting table could be too large across many tenants.
+    IF NOT ($(vu_multi_tenant_enabled)=1 AND $(vu_is_parent_app)=1) AND NoOfRows('Consumption')>0 THEN
+
+        [Entitlement_Consumption]:
+        LOAD
+            *,
+            AutoNumber(startTime&'|'& endTime) AS %ConsumptionExecutionConcurrencyKey,
+            TenantIDTemp&'_'&%MonthKey&'_'&[Entitlement_Consumed] AS %OverviewKey
+        ;
+        LOAD
+            TenantID & '_' & ApplyMap('Map_UserId_UserSubject',userId,userSubject) AS %TenantUserKey,
+            TenantID AS TenantIDTemp,
+            AppName,
+            AppNameUnique,
+            AppOwnerName,
+            SpaceID,
+            SpaceName,
+            SpaceNameUnique,
+            SpaceType,
+            allotmentId,
+            appId,
+            %MonthKey,
+            capacityUsed,
+            duration,
+            Replace(timestamp(endTime-interval(round(duration/1000)/(60*60*24),'hh:mm:ss') ,'YYYY-MM-DD hh:mm:ssZ'),' ','T')  AS startTime,
+            Interval(durationMinutes/60/24) AS durationInterval,
+            durationMinutes,
+            email,
+            endTime,
+            Date(Floor(endTime)) AS endTimeDate,
+            id,
+            minutesUsed,
+            name AS consumerName,
+            sessionId,
+            ApplyMap('Map_UserId_UserSubject',userId,userSubject) as userId, // replaced with user subject
+            if([licenseUsage]= 'ASSIGNED_LICENSE', ApplyMap('userSubjectToAssignments',ApplyMap('Map_UserId_UserSubject',userId,userSubject),null()),'analyzer_time') AS [Entitlement_Consumed]
+
+        RESIDENT Consumption
+        ORDER BY endTime DESC;
+        
+        // Get max & mins (in order to calculate the intervals for concurrent users)
+        //=====
+        LET vConsumptionMinDate = num(timestamp(Peek('endTime',-1,'Entitlement_Consumption')-interval(round(peek('duration',-1,'Entitlement_Consumption')/1000)/(60*60*24),'hh:mm:ss')));
+        LET vConsumptionMaxDate = num(timestamp(Peek('endTime',0,'Entitlement_Consumption')));
+        //=====
+        
+        // Fetching Concurrency data
+        //=====
+        LET vMinutes = Ceil(($(vConsumptionMaxDate)-$(vConsumptionMinDate))*24*(60/$(vConsumptionMinutes)));
+
+        ConsumptionMinutesTemp:
+        LOAD DISTINCT
+            Date($(vConsumptionMinDate)+((1/24/(60/$(vConsumptionMinutes)))*RowNo())) AS ConsumptionConcurrencyMinute
+        AUTOGENERATE $(vMinutes);
+
+        LEFT JOIN
+        INTERVALMATCH (ConsumptionConcurrencyMinute) 
+        LOAD 
+            startTime,
+            endTime
+        RESIDENT Entitlement_Consumption;
+
+        ConumptionConcurrencyMinutes:
+        LOAD
+            ConsumptionConcurrencyMinute,
+        AutoNumber(startTime&'|'&endTime) AS %ConsumptionExecutionConcurrencyKey
+        RESIDENT ConsumptionMinutesTemp;
+
+        DROP TABLE ConsumptionMinutesTemp;
+
+        //=====
+        
+    ELSE
+    	// Remove %ConsumptionExecutionConcurrencyKey if "Parent", and
+        // do not generate concurrency table
+        [Entitlement_Consumption]:
+        LOAD
+            *,
+            TenantIDTemp&'_'&%MonthKey&'_'&[Entitlement_Consumed] AS %OverviewKey
+        ;
+        LOAD
+            TenantID & '_' & ApplyMap('Map_UserId_UserSubject',userId,userSubject) AS %TenantUserKey,
+            TenantID AS TenantIDTemp,
+            AppName,
+            AppNameUnique,
+            AppOwnerName,
+            SpaceID,
+            SpaceName,
+            SpaceNameUnique,
+            SpaceType,
+            allotmentId,
+            appId,
+            %MonthKey,
+            capacityUsed,
+            duration,
+            Replace(timestamp(endTime-interval(round(duration/1000)/(60*60*24),'hh:mm:ss') ,'YYYY-MM-DD hh:mm:ssZ'),' ','T')  AS startTime,
+            Interval(durationMinutes/60/24) AS durationInterval,
+            durationMinutes,
+            email,
+            endTime,
+            Date(Floor(endTime)) AS endTimeDate,
+            id,
+            minutesUsed,
+            name AS consumerName,
+            sessionId,
+            ApplyMap('Map_UserId_UserSubject',userId,userSubject) as userId, // replaced with user subject
+            if([licenseUsage]= 'ASSIGNED_LICENSE', ApplyMap('userSubjectToAssignments',ApplyMap('Map_UserId_UserSubject',userId,userSubject),null()),'analyzer_time') AS [Entitlement_Consumed]
+
+        RESIDENT Consumption
+        ORDER BY endTime DESC;
+        
+    END IF
+    
+    DROP FIELD startTime;
+    DROP FIELD TenantIDTemp;
+    DROP FIELD %MonthKey;
+    DROP FIELD %TenantMonthKey;
+
+    DROP  TABLE Consumption;
+
+    LEFT JOIN (Entitlement_Consumption)
+    LOAD
+        userId, // this is subject now
+        Count(endTime) AS NoOfTimesProfessionalEntitlementWasUsedAfterBeingAssigned,
+        interval((timestamp(min(endTime)))-(ApplyMap('userSubjectToCreated',userId,null())),'DD hh:mm') AS ProfessionalAssignmentToConsumptionDuration
+    RESIDENT Entitlement_Consumption
+    WHERE [Entitlement_Consumed] = 'professional' AND endTime>=ApplyMap('userSubjectToCreated',userId,null())
+    GROUP BY userId;
+
+    LEFT JOIN (Entitlement_Consumption)
+    LOAD
+        userId, // this is subject now
+        Count(endTime) AS NoOfTimesAnalyzerEntitlementWasUsedAfterBeingAssigned,
+        interval((timestamp(min(endTime)))-(ApplyMap('userSubjectToCreated',userId,null())),'DD hh:mm') AS AnalyzerAssignmentToConsumptionDuration
+    RESIDENT Entitlement_Consumption
+    WHERE [Entitlement_Consumed] = 'analyzer' AND endTime>=ApplyMap('userSubjectToCreated',userId,null())
+    GROUP BY userId;
+    
+    //====
+    // Append on null user records for each %OverviewKey so that we can reach
+    // across to the overview regardless of if there was any usage during that
+    // month for each type. In addition, we add a null userId in %TenantUserKey
+    // so that we can reach across to the Entitlement_Assignment table.
+    
+    CONCATENATE(Entitlement_Consumption)
+    LOAD DISTINCT
+    	[%OverviewKey],
+        TenantIDOverviewTemp & '_' & Null() AS %TenantUserKey
+    RESIDENT Overview;
+    
+    //====
+
+    Entitlement_Assignment:
+    LOAD
+        [type] AS [Entitlement_Assigned],
+        TenantID,
+        TenantID & '_' & subject AS %TenantUserKey,
+        UserIdMaster, // used for OEM Dashboard
+        subject AS userSubject,
+        If(Len(assigneeName)>=1,assigneeName,ApplyMap('Map_UserSubject_UserAssignmentName',subject)) AS assigneeName, // grab most recent names that weren't already concatenated and calculated from unassigned
+        [excess] AS Assigned_Excess,
+        Date(Floor([created])) AS Assigned_Date,
+        [created] AS Assigned_Date_Temp
+    RESIDENT Assignments;
+
+    DROP TABLE Assignments;
+    
+    //====
+    // Append  a null userId in %TenantUserKey so that we can reach across 
+    // to the Overview table regardless of if there was any usage during that
+    // month for each type.
+    
+    CONCATENATE(Entitlement_Assignment)
+    LOAD DISTINCT
+    	TenantIDOverviewTemp AS TenantID,
+        TenantIDOverviewTemp & '_' & Null() AS %TenantUserKey
+    RESIDENT Overview;
+    
+    //====
+    
+    DROP FIELD TenantIDOverviewTemp;
+    
+    AUTONUMBER '%*';
+    
+End Sub;
+///$tab Calendar
+Sub calendars
+
+    //endTime
+    Trace Working on master Calendar for  endTime;
+
+    Usage_Calendar:
+    Load Distinct 
+      endTimeDate,
+      Date(Floor(endTime), 'MMM YYYY') 										as  UsageMonth,
+      Dual(Month(Floor(endTime))&' '&Year( Floor(endTime)),Num(MonthEnd(endTime)))	as  UsageMonthText , 
+      Date(monthstart(floor(endTime)), 'MMM YYYY')							as  UsageMonthNum ,
+      WeekStart(endTime) 														as [UsageWeekStart],
+      WeekName(endTime) 														as  UsageWeek ,
+      Day(endTime)															as  UsageDay ,
+      Date(Floor(endTime))													as  UsageDate ,
+      If(endTime>=$(vLast24Hours),1) 											as  Usagelast24hours ,
+      If(endTime>=$(vLast7Days),1) 											as  Usagelast7days ,
+      If(endTime>=$(vLast30Days),1) 											as  Usagelast30days ,
+      If(endTime>=$(vLast60Days),1)											as  Usagelast60days ,
+      If(endTime>=$(vLast90Days),1)											as  Usagelast90days ,
+      If(endTime<$(vLast30Days) and endTime>=$(vLast60Days),1) as [Usagelast30-60days],
+      If(endTime<$(vLast60Days) and endTime>=$(vLast90Days),1) as [Usagelast60-90days]
+
+    Resident Entitlement_Consumption
+    Order By endTime desc;
+
+    // Establish Sort Order of Timeframe
+    timeframe_temp:
+    Load * Inline [
+    Timeframe 
+    Last 24 Hours
+    Last 7 Days
+    Last 30 Days
+    Last 60 Days
+    Last 90 Days
+    Last 30-60 Days
+    Last 60-90 Days
+    ];
+
+    Last_UsageTime :
+    NoConcatenate Load Distinct endTimeDate, 'Last 24 Hours' AS [UsageTimeframe] Resident Usage_Calendar Where Usagelast24hours =1;
+    Concatenate (Last_UsageTime ) Load Distinct endTimeDate, 'Last 7 Days'  AS [UsageTimeframe] Resident Usage_Calendar Where Usagelast7days =1;
+    Concatenate (Last_UsageTime ) Load Distinct endTimeDate, 'Last 30 Days' AS [UsageTimeframe] Resident Usage_Calendar Where Usagelast30days =1;
+    Concatenate (Last_UsageTime ) Load Distinct endTimeDate, 'Last 60 Days' AS [UsageTimeframe] Resident Usage_Calendar Where Usagelast60days =1;
+    Concatenate (Last_UsageTime ) Load Distinct endTimeDate, 'Last 90 Days' AS [UsageTimeframe] Resident Usage_Calendar Where Usagelast90days =1;
+    Concatenate (Last_UsageTime ) Load Distinct endTimeDate, 'Last 30-60 Days' AS [UsageTimeframe] Resident Usage_Calendar Where [Usagelast30-60days]=1;
+    Concatenate (Last_UsageTime ) Load Distinct endTimeDate, 'Last 60-90 Days' AS [UsageTimeframe] Resident Usage_Calendar Where [Usagelast60-90days]=1;
+
+
+    Drop Fields  Usagelast24hours , Usagelast7days , Usagelast30days , Usagelast60days , Usagelast90days , [Usagelast30-60days] , [Usagelast60-90days] ;
+    Drop Table timeframe_temp;
+
+    //Assigned_Date
+    Trace Working on master Calendar for  Assigned_Date;
+
+    Assignments_Calendar:
+    Load Distinct 
+      Assigned_Date,
+      Date(Floor(Assigned_Date_Temp), 'MMM YYYY') 										as AssignedMonth ,
+      Dual(Month(Floor(Assigned_Date_Temp))&' '&Year( Floor(Assigned_Date_Temp)),Num(MonthEnd(Assigned_Date_Temp)))	as AssignedMonthText , 
+      Date(monthstart(floor(Assigned_Date_Temp)), 'MMM YYYY')							as AssignedMonthNum ,
+      WeekStart(Assigned_Date_Temp) 													as [AssignedWeekStart],
+      WeekName(Assigned_Date_Temp) 													as AssignedWeek ,
+      Day(Assigned_Date_Temp)															as AssignedDay ,
+      Date(Floor(Assigned_Date_Temp))													as AssignedDate ,
+      If(Assigned_Date_Temp>=$(vLast24Hours),1) 										as Assignedlast24hours ,
+      If(Assigned_Date_Temp>=$(vLast7Days),1) 											as Assignedlast7days ,
+      If(Assigned_Date_Temp>=$(vLast30Days),1) 										as Assignedlast30days ,
+      If(Assigned_Date_Temp>=$(vLast60Days),1)											as Assignedlast60days ,
+      If(Assigned_Date_Temp>=$(vLast90Days),1)											as Assignedlast90days     
+
+    Resident Entitlement_Assignment
+    Order By Assigned_Date desc;
+    
+    DROP FIELD Assigned_Date_Temp;
+
+    // Establish Sort Order of Timeframe
+    timeframe_temp:
+    Load * Inline [
+    Timeframe
+    Last 24 Hours
+    Last 7 Days
+    Last 30 Days
+    Last 60 Days
+    Last 90 Days
+    ];
+
+    Last_AssignedTime :
+    NoConcatenate Load Distinct Assigned_Date, 'Last 24 Hours' AS [AssignedTimeframe] Resident Assignments_Calendar Where Assignedlast24hours=1;
+    Concatenate (Last_AssignedTime) Load Distinct Assigned_Date, 'Last 7 Days'  AS [AssignedTimeframe] Resident Assignments_Calendar Where Assignedlast7days=1;
+    Concatenate (Last_AssignedTime) Load Distinct Assigned_Date, 'Last 30 Days' AS [AssignedTimeframe] Resident Assignments_Calendar Where Assignedlast30days=1;
+    Concatenate (Last_AssignedTime) Load Distinct Assigned_Date, 'Last 60 Days' AS [AssignedTimeframe] Resident Assignments_Calendar Where Assignedlast60days=1;
+    Concatenate (Last_AssignedTime) Load Distinct Assigned_Date, 'Last 90 Days' AS [AssignedTimeframe] Resident Assignments_Calendar Where Assignedlast90days=1;
+
+    Drop Fields Assignedlast24hours,Assignedlast7days,Assignedlast30days,Assignedlast60days,Assignedlast90days;
+    Drop Table timeframe_temp;
+  
+end sub;
+///$tab QVDs
+// For loading the table from QVD ///////////////////
+
+Sub load_qvd(name)
+
+    LET qvd_name = '$(output_qvd_name($(name),$(app_version)))';
+    If $(incremental_qvds_available)=1 then
+
+        Trace Looking to load: $(qvd_name).;
+        LET file_size = If(IsNull(FileSize('$(qvd_name)')),0,FileSize('$(qvd_name)'));
+
+        If file_size > 0 then
+          Trace File size is $(file_size) bytes;
+          Trace Fetching data from: $(qvd_name);
+          Trace $(name);
+
+          $(name):
+          Load Distinct 
+              * 
+          From [$(qvd_name)](qvd);
+
+        Else
+            Trace Could not find file: $(qvd_name).;
+        End If
+
+    End If
+
+End Sub
+
+//load_qvd_Consumption_Overview_Not_Current_Month
+
+Sub load_qvd_Consumption_Overview_Not_Current_Month
+
+    Let qvd_name = '$(output_qvd_name(Consumption_Overview,$(app_version)))';
+    If $(incremental_qvds_available)=1 then
+
+        Trace Looking to load: $(qvd_name).;
+        Let file_size = If(IsNull(FileSize('$(qvd_name)')),0,FileSize('$(qvd_name)'));
+
+        If file_size > 0 then
+            Trace File size is $(file_size) bytes;
+            Trace Fetching data from: $(qvd_name);
+            Trace Consumption_Overview;
+
+            Consumption_Overview:
+            Load Distinct 
+                * 
+            From [$(qvd_name)](qvd)
+            WHERE allotmentMonth<>Date(monthend(now(1)),'MMM YYYY');
+
+        Else
+            Trace Could not find file: $(qvd_name).;
+        End If
+
+    End If
+
+End Sub
+
+// For storing the table to QVD ///////////////////
+
+Sub store_qvd(name)
+
+    LET qvd_name = '$(output_qvd_name($(name),$(app_version)))';
+    Trace Storing $(qvd_name).;
+    Store $(name) into [$(qvd_name)] (qvd);
+    Trace $(qvd_name) stored!;
+  
+End Sub
+
+///$tab Helper Functions
+SUB execute_sub(sub_routine)
+  Trace Working on $(sub_routine);
+  Let sub_start = Num(Now(1));
+  Call $(sub_routine)
+  Let sub_finish = Num(Now(1));
+  Let sub_duration = Num(Round((sub_finish-sub_start)*86400),'#,##0');
+  Trace $(sub_routine) completed after $(sub_duration) seconds.;
+END SUB
+///$tab Reload Logic
+LET reload_start = Now(1);
+
+//// App Variables & Messaging
+// Reset these variables
+SET ahora=; 
+SET msg=; 
+SET startMsg=; 
+SET comp=;
+LET vTenants = 0;
+
+SET app_name		= 'Entitlement Analyzer';
+SET app_version		= '2.3.0';
+LET comp 			= ComputerName(); 
+LET EngineVer 		= PurgeChar(EngineVersion(),Chr(39)); 
+LET startMsg 		= 'Reloading $(app_name) $(app_version) from $(comp) running QIX Engine version $(EngineVer)';
+
+Trace $(startMsg);
+
+SUB load_core_data
+    Trace Loading data...;
+    For Each sub_routine in 'check_license','check_version','get_tenant_metadata','get_consumption','get_consumption_overview','get_users','get_assignments','get_current_assignments','get_spaces','get_apps'
+        Call execute_sub(sub_routine)
+    Next sub_routine
+END SUB
+
+SUB transform_data
+    Trace Transforming data...;
+    For Each sub_routine in 'load_transformation_logic','calendars'
+        Call execute_sub(sub_routine)
+    Next sub_routine
+END SUB
+
+
+// Main
+If $(vu_multi_tenant_enabled)=1 then 
+    If $(vu_is_parent_app)=1 then
+        Trace This application is configured for a Multi-Tenant setup and has been designated as a **Parent** app.;
+        Trace This application will attempt to load all of the QVDs that have been generated for the $(app_name) within the "QlikMetaCollection" folder found within "$(vu_qlik_meta_collection_parent_dir)";
+        Trace This application will then store all resulting QVDs to a "CompiledTenants" directory.;
+        
+        Call execute_sub('variables')
+        Call execute_sub('load_multi_tenant_qvds(''$(vu_qlik_meta_collection_parent_dir)'',''Monitoring'',''$(app_name)'')')
+
+        If $(vTenants)>0 then
+            Call transform_data
+        End If
+        
+        Trace This application will attempt to store all of the tables from this model to the "QlikMetaCollection/CompiledTenants" folder found within $(vu_qlik_meta_collection_parent_dir);
+  		Call execute_sub('write_tenant_qvds(''$(vu_qlik_meta_collection_parent_dir)'',''Monitoring'',''$(app_name)'',1)')
+        
+        Trace Data fetched from $(vTenants) tenants.;
+    Else
+        Trace This application is configured for a Multi-Tenant setup and has been designated as a **Child** app.;
+        Trace This application will attempt to store all of the tables from this model to the "QlikMetaCollection" folder found within "$(vu_qlik_meta_collection_parent_dir)";
+		
+        Call execute_sub('variables')
+        Call load_core_data
+        Call execute_sub('write_tenant_qvds(''$(vu_qlik_meta_collection_parent_dir)'',''Monitoring'',''$(app_name)'',0)')
+        Call transform_data
+    End If
+Else
+    Call execute_sub('variables')
+    Call load_core_data
+    Call transform_data
+
+    Trace Data fetched from $(vu_tenant_fqdn);
+End If
+
+LET reload_end = Now(1);
+LET reload_duration = Num(Ceil((reload_end-reload_start)*86400),'#,##0');
+LET reload_message = 'At $(reload_end), $(app_name) v$(app_version) finished reloading on $(comp) (QIX Engine $(EngineVer)) after $(reload_duration) seconds.';
+Trace $(reload_message);

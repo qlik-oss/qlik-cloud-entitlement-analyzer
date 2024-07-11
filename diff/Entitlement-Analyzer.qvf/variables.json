@@ -1,0 +1,303 @@
+[
+  {
+    "qInfo": {
+      "qId": "b893ac17-b988-490d-b036-5dafacbca809",
+      "qType": "variable"
+    },
+    "qMetaDef": {},
+    "qName": "vTotal_Usage_Analyzer",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "168"
+  },
+  {
+    "qInfo": {
+      "qId": "5bdd0dbf-d240-4dfc-aad1-93cef67f02f6",
+      "qType": "variable"
+    },
+    "qMetaDef": {},
+    "qName": "from_this_point_forward",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "2021-05-01T00:00:00Z"
+  },
+  {
+    "qInfo": {
+      "qId": "7a6960c6-2fdb-4fc3-a4fc-0abfe1ea794e",
+      "qType": "variable"
+    },
+    "qMetaDef": {},
+    "qName": "vUnites_Used",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "54"
+  },
+  {
+    "qInfo": {
+      "qId": "0259e114-1a10-494e-9194-cca7896ba1fc",
+      "qType": "variable"
+    },
+    "qMetaDef": {},
+    "qName": "vUnits_Used_Analyzer",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "87"
+  },
+  {
+    "qInfo": {
+      "qId": "e767bfd9-0bf0-4afb-8abd-19f161d0ca2c",
+      "qType": "variable"
+    },
+    "qMetaDef": {},
+    "qName": "vUnits_Total_Analyzer",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "500"
+  },
+  {
+    "qInfo": {
+      "qId": "264a6ef3-7fc8-42f1-abc4-9461b2ba48ca",
+      "qType": "variable"
+    },
+    "qMetaDef": {},
+    "qName": "vConsumptionMaxDateFloor",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "2022-09-15"
+  },
+  {
+    "qInfo": {
+      "qId": "0d25bc1f-6ba0-4ffa-add6-5af52280ba0d",
+      "qType": "variable"
+    },
+    "qMetaDef": {},
+    "qName": "vUnits_Used",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "168"
+  },
+  {
+    "qInfo": {
+      "qId": "86a76d50-4c5c-462a-a519-bf724786853c",
+      "qType": "variable"
+    },
+    "qMetaDef": {},
+    "qName": "vOverage",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "2000"
+  },
+  {
+    "qInfo": {
+      "qId": "3106b3ba-b360-4f8f-a420-a24e6c7f537e",
+      "qType": "variable"
+    },
+    "qMetaDef": {},
+    "qName": "vRenderChildOnlyMessage",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "'This visualization is not supported in Multi-Tenant mode where the app is a \"Parent\".'",
+    "tags": []
+  },
+  {
+    "qInfo": {
+      "qId": "b908be2d-c1e2-44fb-8940-2dfc3944b65f",
+      "qType": "variable"
+    },
+    "qMetaDef": {},
+    "qName": "vRenderChildOnly",
+    "qComment": "Render this visualization only if it is in a \"Child\" app.",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "=NOT ($(vu_multi_tenant_enabled)=1 AND $(vu_is_parent_app)=1)",
+    "tags": []
+  },
+  {
+    "qInfo": {
+      "qId": "ff904927-a1bd-4ec2-a0c1-4f03c29ce34f",
+      "qType": "variable"
+    },
+    "qMetaDef": {},
+    "qName": "vUnits_Total",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "1000"
+  },
+  {
+    "qInfo": {
+      "qId": "3b76cfbe-8ca4-41e2-8571-4603e5af0d1c",
+      "qType": "variable"
+    },
+    "qMetaDef": {},
+    "qName": "vTimeDimensionUsage",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "UsageMonthText",
+    "tags": []
+  },
+  {
+    "qInfo": {
+      "qId": "600fef86-578e-4f6f-8e11-0469dbfedc19",
+      "qType": "variable"
+    },
+    "qMetaDef": {},
+    "qName": "vNextURL",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "\u0026"
+  },
+  {
+    "qInfo": {
+      "qId": "a1191c40-e21d-4685-925f-c61201bf1f6f",
+      "qType": "variable"
+    },
+    "qMetaDef": {},
+    "qName": "vConsumptionMinDateFloor",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "2022-09-06"
+  },
+  {
+    "qInfo": {
+      "qId": "d90116fb-3191-4045-89de-9143dddc2e6c",
+      "qType": "variable"
+    },
+    "qMetaDef": {},
+    "qName": "vRenderVis",
+    "qComment": "Only render the visualization if the app is in single tenant mode.",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "=NOT ($(vu_multi_tenant_enabled)=1 AND $(vu_is_parent_app)=1)",
+    "tags": []
+  },
+  {
+    "qInfo": {
+      "qId": "288233fe-7bd6-4918-a49f-73ac308c8a5b",
+      "qType": "variable"
+    },
+    "qMetaDef": {},
+    "qName": "vRenderVisMessage",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "'Visualizations are not available while this app is in \"Parent\" mode. Use the OEM Dashboard to visualize the data.'",
+    "tags": []
+  },
+  {
+    "qInfo": {
+      "qId": "693ce699-617a-4cf5-a066-bd89eca97d3d",
+      "qType": "variable"
+    },
+    "qMetaDef": {},
+    "qName": "vTenantFileFound",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "1"
+  },
+  {
+    "qInfo": {
+      "qId": "6cd46210-c1c0-4fb4-bf8d-66bcf300c8a7",
+      "qType": "variable"
+    },
+    "qMetaDef": {},
+    "qName": "1",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "1"
+  },
+  {
+    "qInfo": {
+      "qId": "08ef5aae-ad04-4308-980c-ee27707e1f67",
+      "qType": "variable"
+    },
+    "qMetaDef": {},
+    "qName": "vAnyFileFound",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "1"
+  },
+  {
+    "qInfo": {
+      "qId": "026d56d1-0f6e-4fc1-9cde-e0b3e43e41ab",
+      "qType": "variable"
+    },
+    "qMetaDef": {},
+    "qName": "vNumTables",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "1"
+  },
+  {
+    "qInfo": {
+      "qId": "09191eb0-a2d8-4b89-a32a-d16aecaa4c79",
+      "qType": "variable"
+    },
+    "qMetaDef": {},
+    "qName": "vTable",
+    "qNumberPresentation": {
+      "qType": "U",
+      "qnDec": 10,
+      "qUseThou": 0
+    },
+    "qDefinition": "CheckLicense"
+  }
+]
