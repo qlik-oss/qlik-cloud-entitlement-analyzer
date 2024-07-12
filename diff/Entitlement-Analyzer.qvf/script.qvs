@@ -8,7 +8,7 @@
     /_____/  /_/ /_/\__/ /_/  \__/ /_/  \___//_/ /_/ /_/\___//_/ /_/\__/      /_/  |_/_/ /_/\__,_/ /_/  _\__, / _____/\___//_/     
                                                                                                         /____/                     
 
-    Copyright 2023 QlikTech International
+    Copyright 2024 QlikTech International
     Created by Konstantinos Mertzianis, Senior Quality Analyst, Qlik
 
 	About the "Entitlement Analyzer" app:
@@ -1829,7 +1829,7 @@ SET comp=;
 LET vTenants = 0;
 
 SET app_name		= 'Entitlement Analyzer';
-SET app_version		= '2.3.0';
+SET app_version		= '2.4.0';
 LET comp 			= ComputerName(); 
 LET EngineVer 		= PurgeChar(EngineVersion(),Chr(39)); 
 LET startMsg 		= 'Reloading $(app_name) $(app_version) from $(comp) running QIX Engine version $(EngineVer)';
