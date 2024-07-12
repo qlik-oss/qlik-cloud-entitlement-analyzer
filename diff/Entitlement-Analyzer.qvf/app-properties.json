@@ -1,9 +1,9 @@
 {
-  "qTitle": "Entitlement Analyzer v2.3.0",
+  "qTitle": "Entitlement Analyzer",
   "qThumbnail": {
     "qUrl": "/api/v1/apps/<appId>/media/files/UserAnalyzer.png"
   },
-  "description": "The Entitlement Analyzer provides a comprehensive dashboard to analyze entitlement consumption and assignments across a Qlik Sense tenant(s).\n\n{v2.3.0}",
+  "description": "The Entitlement Analyzer provides a comprehensive dashboard to analyze entitlement consumption and assignments across a Qlik Sense tenant(s).\n\n{v2.4.0}",
   "qUsage": "ANALYTICS",
   "published": false,
   "hassectionaccess": false
