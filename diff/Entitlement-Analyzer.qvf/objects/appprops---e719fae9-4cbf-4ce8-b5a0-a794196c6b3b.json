@@ -1,0 +1,17 @@
+{
+  "qInfo": {
+    "qId": "e719fae9-4cbf-4ce8-b5a0-a794196c6b3b",
+    "qType": "appprops"
+  },
+  "qMetaDef": {},
+  "sheetTitleBgColor": "",
+  "sheetTitleGradientColor": "",
+  "sheetTitleColor": "",
+  "sheetLogoThumbnail": {
+    "qStaticContentUrlDef": {}
+  },
+  "sheetLogoPosition": "",
+  "rtl": false,
+  "theme": "card",
+  "disableCellNavMenu": false
+}

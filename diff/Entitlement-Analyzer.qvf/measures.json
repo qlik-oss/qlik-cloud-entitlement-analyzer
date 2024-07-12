@@ -1,0 +1,1535 @@
+[
+  {
+    "qInfo": {
+      "qId": "XJjRMm",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#User(s) assigned a license",
+      "qDef": "Count({\u003cEntitlement_Assigned-={'unassigned'}\u003e}userSubject)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#User(s) assigned a license",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "mdYee",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Avg session duration [hh:mm]",
+      "qDef": "interval((sum(durationMinutes)/count(id))/24/60,'hh:mm')\r\n",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "Avg session duration [hh:mm]",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "GCvH",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Sessions (last 90 days)",
+      "qDef": "count({\u003cUsageTimeframe={'Last 90 Days'}\u003e}id)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Sessions (last 90 days)",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "82c56a8b-7977-42df-a31c-3a6fbe83f611",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Sessions (last 7 days)",
+      "qDef": "count({\u003cUsageTimeframe={'Last 7 Days'}\u003e}id)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Sessions (last 7 days)",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "45b59c6b-c326-45b4-95bd-c676ad8cf12d",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Sessions (last 60 days)",
+      "qDef": "count({\u003cUsageTimeframe={'Last 60 Days'}\u003e}id)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Sessions (last 60 days)",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "bb05d00f-db42-4865-893b-2a9e02ee2bb9",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Sessions (last 30 days)",
+      "qDef": "count({\u003cUsageTimeframe={'Last 30 Days'}\u003e}id)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Sessions (last 30 days)",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "ZEJJg",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Sessions",
+      "qDef": "Count(id)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Sessions",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "urjGd",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Previous month",
+      "qDef": "Count(DISTINCT {\u003cUsageMonthText={\"$(=date(addmonths(max(endTime),-1), 'MMM YYYY'))\"}\u003e}consumerName)\r\n",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "Previous month",
+      "description": "#Consumers during the previous month",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "PwGjfjr",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Consumers current month",
+      "qDef": "count(DISTINCT {\u003cUsageMonthText={\"$(=Date(Floor(max(endTime)), 'MMM YYYY'))\"}\u003e}consumerName)\r\n",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Consumers current month",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "zrsQtcF",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "1 month ago",
+      "qDef": "count(DISTINCT {\u003cUsageDate={\"\u003c=$(=(Addmonths(max(endTime),-1)))\"}\u003e}consumerName)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "1 month ago",
+      "description": "#Consumers 1 month ago",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "EKLDPPh",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Monthly consumption growth rate [%]",
+      "qDef": "if(RowNo()=1,0,\r\n(count(DISTINCT consumerName)/Above(count(DISTINCT consumerName))-1) )",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "Monthly consumption growth rate [%]",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "MxTWsvv",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Consumers",
+      "qDef": "Count(DISTINCT consumerName)\r\n",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Consumers",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "QAyEDg",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Consumers last 90 days",
+      "qDef": "count(DISTINCT {\u003cUsageTimeframe={'Last 90 Days'}\u003e} consumerName)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Consumers last 90 days",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "HYBzSp",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Max concurrency per app last 7 days",
+      "qDef": "max({\u003cUsageTimeframe={'Last 7 Days'}\u003e}aggr(count({\u003cUsageTimeframe={'Last 7 Days'}\u003e}ConsumptionConcurrencyMinute),AppName,ConsumptionConcurrencyMinute))",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "Max concurrency per app last 7 days",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "DqstaeW",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Consumers last 30 days",
+      "qDef": "count(DISTINCT {\u003cUsageTimeframe={'Last 30 Days'}\u003e} consumerName)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Consumers last 30 days",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "HfTPTmR",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Consumers last 60 days",
+      "qDef": "count(DISTINCT {\u003cUsageTimeframe={'Last 60 Days'}\u003e} consumerName)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Consumers last 60 days",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "PJxpjmm",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Consumers last 7 days",
+      "qDef": "count(DISTINCT {\u003cUsageTimeframe={'Last 7 Days'}\u003e} consumerName)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Consumers last 7 days",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "BXfZDpS",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Concurrent users",
+      "qDef": "count({\u003cConsumptionConcurrencyMinute={*}\u003e}ConsumptionConcurrencyMinute)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Concurrent users",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "TEAAht",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Max concurrency per app",
+      "qDef": "max(aggr(count(ConsumptionConcurrencyMinute),AppName,ConsumptionConcurrencyMinute))",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "Max concurrency per app",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "YDjMz",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Days Since Last Session",
+      "qDef": "interval(today(2)-daystart(max( endTime)),'d')",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "Days Since Last Session",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "YHmvh",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Users consuming a license",
+      "qDef": "Count(DISTINCT consumerName)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Users consuming a license",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "MDAbCJj",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Duration from Assignment to consumption (hh:mm:ss)",
+      "qDef": "only(AnalyzerAssignmentToConsumptionDuration)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "Duration from Assignment to consumption (hh:mm:ss)",
+      "description": "Analyzer",
+      "tags": [
+        "Analyzer"
+      ]
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "jrJZqmk",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Duration from Assignment to consumption (hh:mm:ss)",
+      "qDef": "Only(ProfessionalAssignmentToConsumptionDuration)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "Duration from Assignment to consumption (hh:mm:ss)",
+      "description": "Professional",
+      "tags": [
+        "Professional"
+      ]
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "BENKvNd",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Times an analyzer entitlement was used since it was assigned",
+      "qDef": "only(NoOfTimesAnalyzerEntitlementWasUsedAfterBeingAssigned)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Times an analyzer entitlement was used since it was assigned",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "SZZFE",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Times a professional entitlement was used since it was assigned",
+      "qDef": "Only(NoOfTimesProfessionalEntitlementWasUsedAfterBeingAssigned)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Times a professional entitlement was used since it was assigned",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "NzJnsj",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Remaining overage",
+      "qDef": "if(sum({\u003cEntitlement_Consumed={'analyzer_time'}\u003e}minutesUsed) \u003e sum({\u003clicense_name={'analyzer_time'}\u003e}units),\r\nsum({\u003clicense_name={'analyzer_time'}\u003e}overage)-sum({\u003cEntitlement_Consumed={'analyzer_time'}\u003e}minutesUsed),\nsum({\u003clicense_name={'analyzer_time'}\u003e}overage))",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {
+        "baseColor": {
+          "color": "#AC4D58",
+          "index": -1
+        }
+      }
+    },
+    "qMetaDef": {
+      "title": "Remaining overage",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "SRtt",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Remaining minutes total",
+      "qDef": "(Sum({\u003clicense_name={'analyzer_time'}\u003e}units))\r\n-\nSum(minutesUsed)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {
+        "baseColor": {
+          "color": "#ffffff",
+          "index": 1
+        }
+      }
+    },
+    "qMetaDef": {
+      "title": "Remaining minutes total",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "EjGSKyB",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Units (VL) - current",
+      "qDef": "IF( ValueList('Used', 'Unused') = 'Used' , Sum({\u003cUsageMonthText={'$(=Date(today(),'MMM YYYY'))'}, Entitlement_Consumed={'analyzer_time'}\u003e}minutesUsed),\r\n Sum({\u003callotmentMonth={'$(=Date(today(),'MMM YYYY'))'},license_name={'analyzer_time'}\u003e}overage)\n+\n(\nSum({\u003callotmentMonth={'$(=Date(today(),'MMM YYYY'))'},license_name={'analyzer_time'}\u003e}units)-\nSum({\u003cUsageMonthText={'$(=Date(today(),'MMM YYYY'))'}, Entitlement_Consumed={'analyzer_time'}\u003e}minutesUsed)))\n/*\n- \n(If($(vUnits_Used)\u003e$(vUnits_Total),$(vUnits_Used)-$(vUnits_Total),0))\n)\n\n\nSum({\u003cUsageMonthText={'$(=Dual(Month(Today())\u0026chr(32)\u0026Year( Today()),Year( Today())+num(month(today()))))'},license_name={'analyzer_time'}\u003e}units)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "Units (VL) - current",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "ePbDWE",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Avg daily usage for your capacity minutes (current month)",
+      "qDef": "sum(aggr(sum({\u003cUsageMonthText={'$(=Dual(Month(Today())\u0026chr(32)\u0026Year( Today()),Year( Today())+num(month(today()))))'}\u003e}minutesUsed)\r\n/sum({\u003clicense_name={'analyzer_time'},UsageMonthText={'$(=Dual(Month(Today())\u0026chr(32)\u0026Year( Today()),Year( Today())+num(month(today()))))'}\u003e}units),UsageDate))\n/(Today()-monthstart(today()))\n",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "Avg daily usage for your capacity minutes (current month)",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "pRCcpm",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Analyzer units unassigned",
+      "qDef": "sum({\u003clicense_name={'analyzer'}\u003e}units)-sum({\u003clicense_name={'analyzer'}\u003e}unitsUsed)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Analyzer units unassigned",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "svhXqY",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Analyzer units used",
+      "qDef": "count(DISTINCT  {\u003cEntitlement_Consumed={'analyzer'}\u003e}consumerName)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {
+        "baseColor": {
+          "color": "#118028",
+          "index": -1
+        }
+      }
+    },
+    "qMetaDef": {
+      "title": "#Analyzer units used",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "pmPpJxy",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Analyzer units unused",
+      "qDef": "sum(DISTINCT  {\u003clicense_name={'analyzer'}\u003e} unitsUsed)-Count(DISTINCT  {\u003cEntitlement_Consumed={'analyzer'}\u003e} consumerName) ",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {
+        "baseColor": {
+          "color": "#ffffff",
+          "index": 1
+        }
+      }
+    },
+    "qMetaDef": {
+      "title": "#Analyzer units unused",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "CTAteZm",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Professional units unassigned",
+      "qDef": "sum({\u003clicense_name={'professional'}\u003e}units)-sum({\u003clicense_name={'professional'}\u003e}unitsUsed)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Professional units unassigned",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "jybYLQN",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Profession units unused",
+      "qDef": "sum(DISTINCT  {\u003clicense_name={'professional'}\u003e} unitsUsed)-Count(DISTINCT  {\u003cEntitlement_Consumed={'professional'}\u003e} consumerName) ",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {
+        "baseColor": {
+          "color": "#ffffff",
+          "index": 1
+        }
+      }
+    },
+    "qMetaDef": {
+      "title": "#Profession units unused",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "vJWPRf",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Days till overage (current)",
+      "qDef": "Round(\r\n(sum({\u003callotmentMonth={'$(=Date(today(),'MMM YYYY'))'}\u003e}units)-sum({\u003cUsageMonthText={'$(=Date(today(),'MMM YYYY'))'}\u003e}minutesUsed))\n/\n((\nsum(aggr(sum({\u003cUsageMonthText={'$(=Date(today(),'MMM YYYY'))'}\u003e}minutesUsed)\n/sum({\u003clicense_name={'analyzer_time'},UsageMonthText={'$(=Date(today(),'MMM YYYY'))'}\u003e}units),UsageDate))\n/(Today()-monthstart(today()))\n)*sum({\u003callotmentMonth={'$(=Date(today(),'MMM YYYY'))'}\u003e}units))\n)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Days till overage (current)",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "fJxwq",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Capacity usage rate",
+      "qDef": "if(sum(minutesUsed)=0,0,\r\nsum(minutesUsed)/sum({\u003clicense_name={'analyzer_time'}\u003e}units))",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "Capacity usage rate",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "cPTqVfg",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Capacity user(s)",
+      "qDef": "Count(DISTINCT {\u003cEntitlement_Consumed={'analyzer_time'}\u003e}consumerName)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Capacity user(s)",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "VUL",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Users (time license)",
+      "qDef": "Count(DISTINCT{\u003cEntitlement_Consumed={'analyzer_time'}\u003e}consumerName)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Users (time license)",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "QdQAs",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Users assigned a professional entitlement",
+      "qDef": "Count(DISTINCT {\u003cEntitlement_Assigned={'professional'}\u003e}assigneeName)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Users assigned a professional entitlement",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "NzzHUS",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Users assigned an analyzer entitlement",
+      "qDef": "Count(DISTINCT {\u003cEntitlement_Assigned={'analyzer'}\u003e}assigneeName)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Users assigned an analyzer entitlement",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "pxznNj",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Users using  professional entitlement units",
+      "qDef": "Count(DISTINCT {\u003cEntitlement_Consumed={'professional'}\u003e} consumerName)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Users using  professional entitlement units",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "fnjpak",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Avg weekly usage for your capacity minutes  (%)",
+      "qDef": "sum(aggr(sum(minutesUsed)/sum({\u003clicense_name={'analyzer_time'}\u003e}units),UsageWeek))\r\n/count(DISTINCT{\u003cEntitlement_Consumed={'analyzer_time'}\u003e}UsageWeek)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "Avg weekly usage for your capacity minutes  (%)",
+      "description": "Capacity time avg weekly usage rate for total units",
+      "tags": [
+        "capacity time",
+        "units"
+      ]
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "XUYAqG",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Professional  units used",
+      "qDef": "Count(DISTINCT  {\u003cEntitlement_Consumed={'professional'}\u003e} consumerName)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {
+        "baseColor": {
+          "color": "#118028",
+          "index": -1
+        }
+      }
+    },
+    "qMetaDef": {
+      "title": "#Professional  units used",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "rWjR",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Used",
+      "qDef": "count(DISTINCT {\u003cUsageMonthText={'$(=Date(today(),'MMM YYYY'))'}, Entitlement_Consumed={'analyzer'}\u003e}consumerName)/\r\nSum({\u003callotmentMonth={'$(=Date(today(),'MMM YYYY'))'}, license_name={'analyzer'}\u003e}unitsUsed)\n",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "Used",
+      "description": "Analyzer",
+      "tags": [
+        "Analyzer"
+      ]
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "AkyFvE",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Used",
+      "qDef": "count(DISTINCT {\u003cUsageMonthText={'$(=Date(today(),'MMM YYYY'))'}, Entitlement_Consumed={'professional'}\u003e}consumerName)/\r\nSum({\u003callotmentMonth={'$(=Date(today(),'MMM YYYY'))'}, license_name={'professional'}\u003e}unitsUsed)\n",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "Used",
+      "description": "Professional",
+      "tags": [
+        "professional"
+      ]
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "tUcDYhH",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Overage used",
+      "qDef": "if(Sum({\u003cUsageMonthText={'$(=Date(today(),'MMM YYYY'))'}, Entitlement_Consumed={'analyzer_time'}\u003e}minutesUsed)\r\n\t\u003eSum({\u003callotmentMonth={'$(=Date(today(),'MMM YYYY'))'}, license_name={'analyzer_time'}\u003e}units),\n\t\t\tSum({\u003cUsageMonthText={'$(=Date(today(),'MMM YYYY'))'}, Entitlement_Consumed={'analyzer_time'}\u003e}minutesUsed)\n\t\t\t\t/(Sum({\u003callotmentMonth={'$(=Date(today(),'MMM YYYY'))'}, license_name={'analyzer_time'}\u003e}overage)) ,\n                0)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "Overage used",
+      "description": "Overage",
+      "tags": [
+        "Overage"
+      ]
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "BrJcWDV",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Used",
+      "qDef": "Sum({\u003cUsageMonthText={'$(=Date(today(),'MMM YYYY'))'}, Entitlement_Consumed={'analyzer_time'}\u003e}minutesUsed)\r\n/Sum({\u003callotmentMonth={'$(=Date(today(),'MMM YYYY'))'}, license_name={'analyzer_time'}\u003e}units)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "Used",
+      "description": "Analyzer capacity minutes",
+      "tags": [
+        "Analyzer capacity minutes"
+      ]
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "ktJMgs",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Assigned",
+      "qDef": "\r\nSum({\u003callotmentMonth={'$(=Date(today(),'MMM YYYY'))'}, license_name={'analyzer'}\u003e}unitsUsed)\n/Sum({\u003callotmentMonth={'$(=Date(today(),'MMM YYYY'))'}, license_name={'analyzer'}\u003e}units)\n\n",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "Assigned",
+      "description": "Analyzer",
+      "tags": [
+        "Analyzer"
+      ]
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "GQNA",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Assigned",
+      "qDef": "\r\nSum({\u003callotmentMonth={'$(=Date(today(),'MMM YYYY'))'}, license_name={'professional'}\u003e}unitsUsed)\n/Sum({\u003callotmentMonth={'$(=Date(today(),'MMM YYYY'))'}, license_name={'professional'}\u003e}units)\n\n",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "Assigned",
+      "description": "Professional",
+      "tags": [
+        "Professional"
+      ]
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "jvnmMGp",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Professional units assigned",
+      "qDef": "Sum({\u003callotmentMonth={'$(=Date(today(),'MMM YYYY'))'}, license_name={'professional'}\u003e}unitsUsed)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Professional units assigned",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "FJsv",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Professional units purchased",
+      "qDef": "Sum({\u003callotmentMonth={'$(=Date(today(),'MMM YYYY'))'}, license_name={'professional'}\u003e}units)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Professional units purchased",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "MsBZpw",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Units total",
+      "qDef": "(Sum({\u003clicense_name={'analyzer_time'}\u003e}units))\r\n\n",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {
+        "baseColor": {
+          "color": "#ffffff",
+          "index": 1
+        }
+      }
+    },
+    "qMetaDef": {
+      "title": "Units total",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "pPvjLj",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Units total (current)",
+      "qDef": "(Sum({\u003callotmentMonth={'$(=Date(today(),'MMM YYYY'))'}, license_name={'analyzer_time'}\u003e}units))\r\n",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "Units total (current)",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "uYu",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Minutes used (current)",
+      "qDef": "Sum({\u003cUsageMonthText={'$(=Dual(Month(Today())\u0026chr(32)\u0026Year( Today()),Year( Today())+num(month(today()))))'}\u003e}minutesUsed)\r\n",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {
+        "baseColor": {
+          "color": "#118028",
+          "index": -1
+        }
+      }
+    },
+    "qMetaDef": {
+      "title": "Minutes used (current)",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "FezLXZe",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Duration of event(s) (hh:mm:ss)",
+      "qDef": "Sum(durationInterval)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "Duration of event(s) (hh:mm:ss)",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "xsaJYz",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Units used",
+      "qDef": "sum(unitsUsed)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "Units used",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "TaBNdv",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Units",
+      "qDef": "sum(units)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "Units",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "jegpW",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Overage",
+      "qDef": "Sum({\u003clicense_name={'analyzer_time'}\u003e}overage)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {
+        "baseColor": {
+          "color": "#AC4D58",
+          "index": -1
+        }
+      }
+    },
+    "qMetaDef": {
+      "title": "Overage",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "JhQpg",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Minutes used",
+      "qDef": "Sum(minutesUsed)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {
+        "baseColor": {
+          "color": "#118028",
+          "index": -1
+        }
+      }
+    },
+    "qMetaDef": {
+      "title": "Minutes used",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "srnvLS",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "#Apps",
+      "qDef": "Count(DISTINCT app_name)",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "#Apps",
+      "description": "",
+      "tags": []
+    }
+  },
+  {
+    "qInfo": {
+      "qId": "yEAeReW",
+      "qType": "measure"
+    },
+    "qMeasure": {
+      "qLabel": "Duration of event(s) (minutes)",
+      "qDef": "Sum(durationMinutes)\r\n\n",
+      "qGrouping": "N",
+      "qExpressions": [],
+      "qActiveExpression": 0,
+      "qNumFormat": {
+        "qType": "U",
+        "qnDec": 10,
+        "qUseThou": 0
+      },
+      "coloring": {}
+    },
+    "qMetaDef": {
+      "title": "Duration of event(s) (minutes)",
+      "description": "",
+      "tags": []
+    }
+  }
+]

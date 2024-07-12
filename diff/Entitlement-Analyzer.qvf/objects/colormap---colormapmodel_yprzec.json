@@ -1,0 +1,38 @@
+{
+  "qInfo": {
+    "qId": "ColorMapModel_yPRZEc",
+    "qType": "ColorMap"
+  },
+  "qMetaDef": {},
+  "colorMap": {
+    "colors": [
+      {
+        "value": "Personal",
+        "baseColor": {
+          "color": "#CCCCCC",
+          "index": -1
+        }
+      },
+      {
+        "value": "Shared",
+        "baseColor": {
+          "color": "#005CB9",
+          "index": -1
+        }
+      },
+      {
+        "value": "Managed",
+        "baseColor": {
+          "color": "#CC3333",
+          "index": -1
+        }
+      }
+    ],
+    "nul": null,
+    "oth": null,
+    "pal": null,
+    "single": null,
+    "usePal": true,
+    "autoFill": true
+  }
+}
